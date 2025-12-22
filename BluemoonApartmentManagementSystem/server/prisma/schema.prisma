@@ -12,3 +12,130 @@ generator client {
 datasource db {
   provider = "mysql"
 }
+
+model User {
+  id          Int           @id @default(autoincrement())
+  fullName    String
+  dateOfBirth DateTime?
+  sex         Sex           @default(MALE)
+  phoneNum    String
+  email       String        @unique
+  password    String
+  isActive    Boolean       @default(false)
+  role        Role          @default(USER)
+  resident    Resident?     @relation(fields: [residentId], references: [id])
+  residentId  Int?          @unique
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+}
+
+model Resident {
+  id                    Int               @id @default(autoincrement())
+  fullName              String
+  identificationNumber  String            @unique
+  status                Status            @default(PERMANENT)
+  user                  User?
+  household             Household         @relation(fields: [householdId], references: [id])
+  householdId           Int               
+  temporaryRecord       TemporaryRecord[]
+  @@index([householdId])
+}
+
+model Household {
+  id          Int         @id @default(autoincrement())
+  roomNumber  Int         @unique
+  owner       String?
+  resident    Resident[]
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  bill        Bill[]
+}
+
+model TemporaryRecord {
+  id          Int       @id @default(autoincrement())
+  resident    Resident  @relation(fields: [residentId], references: [id])
+  residentId  Int       
+  type        Type      @default(RESIDENCE)
+  startDate   DateTime
+  endDate     DateTime
+  @@index([residentId])
+}
+
+model Fee {
+  id      Int     @id @default(autoincrement())
+  name    String
+  amount  Int 
+  cycle   Cycle   @default(DAILY)
+  bill    Bill[]
+}
+
+model Bill {
+  id          Int         @id @default(autoincrement())
+  fee         Fee         @relation(fields: [feeId], references: [id])
+  feeId       Int         
+  household   Household   @relation(fields: [householdId], references: [id])
+  householdId Int         
+  total       Int
+  paidStatus  PaidStatus  @default(UNPAID)
+  payment     Payment[]
+  @@index([householdId])
+  @@index([feeId])
+  @@index([paidStatus])
+  @@index([householdId, paidStatus])
+}
+
+model Payment {
+  id          Int       @id @default(autoincrement())
+  bill        Bill      @relation(fields: [billId], references: [id])
+  billId      Int       
+  paidAt      DateTime  @default(now())
+  amount      Int
+  method      Method    @default(CASH)
+}
+
+//Can xem lai
+model Function {
+  id          Int         @id @default(autoincrement())
+  name        String
+  groupName   String
+  component   String
+  role        Role        @default(USER)
+}
+
+enum Sex {
+  MALE
+  FEMALE
+  OTHER
+}
+
+enum Status {
+  PERMANENT
+  TEMPORARY
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum Type {
+  RESIDENCE
+  ABSENCE
+}
+
+enum Cycle {
+  DAILY
+  WEEKLY
+  MONTHLY
+  YEARLY
+}
+
+enum PaidStatus {
+  PAID
+  UNPAID
+}
+
+enum Method {
+  MOMO
+  CASH
+}
