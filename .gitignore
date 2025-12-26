@@ -1,0 +1,16 @@
+BluemoonApartmentManagementSystem/server/generated/prisma/internal/prismaNamespace.ts
+BluemoonApartmentManagementSystem/server/generated/prisma/internal/class.ts
+BluemoonApartmentManagementSystem/server/generated/prisma/enums.ts
+BluemoonApartmentManagementSystem/server/generated/prisma/commonInputTypes.ts
+BluemoonApartmentManagementSystem/server/generated/prisma/client.ts
+BluemoonApartmentManagementSystem/server/generated/prisma/browser.ts
+BluemoonApartmentManagementSystem/server/generated/prisma/internal/prismaNamespaceBrowser.ts
+BluemoonApartmentManagementSystem/server/generated/prisma/models.ts
+BluemoonApartmentManagementSystem/server/generated/prisma/models/Bill.ts
+BluemoonApartmentManagementSystem/server/generated/prisma/models/Fee.ts
+BluemoonApartmentManagementSystem/server/generated/prisma/models/Function.ts
+BluemoonApartmentManagementSystem/server/generated/prisma/models/Household.ts
+BluemoonApartmentManagementSystem/server/generated/prisma/models/Payment.ts
+BluemoonApartmentManagementSystem/server/generated/prisma/models/Resident.ts
+BluemoonApartmentManagementSystem/server/generated/prisma/models/TemporaryRecord.ts
+BluemoonApartmentManagementSystem/server/generated/prisma/models/User.ts
