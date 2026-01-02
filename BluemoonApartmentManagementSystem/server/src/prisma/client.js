@@ -1,10 +1,20 @@
+// require("dotenv/config");
+// const { PrismaMariaDb } = require("@prisma/adapter-mariadb");
+// const { PrismaClient } = require("@prisma/client");
+
+// const adapter = new PrismaMariaDb({
+//   host: process.env.DATABASE_HOST,
+//   user: process.env.DATABASE_USER,
+//   password: process.env.DATABASE_PASSWORD,
+//   database: process.env.DATABASE_NAME,
+//   connectionLimit: 5
+// });
+// const prisma = new PrismaClient({ adapter });
+
+// module.exports = prisma;
+
 const { PrismaClient } = require("@prisma/client");
-const { PrismaPlanetScale } = require("@prisma/adapter-planetscale");
-const mysql = require("mysql2/promise");
 
-const connection = mysql.createConnection(process.env.DATABASE_URL);
-const adapter = new PrismaPlanetScale(connection);
-
-const prisma = new PrismaClient({ adapter });
+const prisma = new PrismaClient();
 
 module.exports = prisma;
