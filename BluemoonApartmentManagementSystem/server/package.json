@@ -13,8 +13,11 @@
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
+    "@prisma/adapter-planetscale": "^7.2.0",
     "@prisma/client": "^7.2.0",
-    "express": "^5.2.1"
+    "@prisma/driver-adapter-utils": "^7.2.0",
+    "express": "^5.2.1",
+    "mysql2": "^3.16.0"
   },
   "devDependencies": {
     "@types/express": "^5.0.6",

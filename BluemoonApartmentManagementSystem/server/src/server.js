@@ -2,16 +2,14 @@ const express = require("express");
 const dotenv = require("dotenv");
 dotenv.config();
 
+const route = require("./routes/route");
+
 const app = express();
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-app.use("/auth", require("./routes/auth.route"));
-app.use("/users", require("./routes/user.route"));
-app.use("/residents", require("./routes/resident.route"));
-app.use("/households", require("./routes/household.route"));
-app.use("/fees", require("./routes/fee.route"));
-app.use("/bills", require("./routes/bill.route"));
-app.use("/payments", require("./routes/payment.route"));
+// Initialize routes
+route(app);
 
 app.get("/", (_, res) => res.send("API OK 🚀"));
 
