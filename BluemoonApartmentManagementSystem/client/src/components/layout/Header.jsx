@@ -27,7 +27,7 @@ function Header() {
 
       <div style={{ display: 'flex', gap: '15px' }}>
         <Link to="/login">
-          <button className="btn-outline">Log in</button>
+          <button className="btn-primary">Log in</button>
         </Link>
         <Link to="/signup">
           <button className="btn-primary">Sign up</button>
