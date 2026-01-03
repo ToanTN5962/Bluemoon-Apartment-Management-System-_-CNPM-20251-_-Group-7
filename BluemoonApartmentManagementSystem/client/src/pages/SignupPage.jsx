@@ -6,6 +6,40 @@ function SignupPage() {
   // Theo dõi chiều rộng màn hình để xử lý Responsive
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [phoneNum, setPhoneNum] = useState("");
+
+  const handleSignup = async(e) => {
+    e.preventDefault();
+
+    // Gửi yêu cầu đăng ký đến backend
+    try {
+      const response = await fetch("/api/auth/signup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({fullName: username, email, password, phoneNum}),
+      });
+
+      const data = await response.json();
+      
+      if(!response.ok){
+        alert(data.message || "Signup failed");
+        return;
+      }
+      else {
+        alert("Signup successful! Please log in.");
+      }
+
+    } catch (error) {
+      console.error("Error during signup:", error);
+    }
+  }
+
   useEffect(() => {
     const handleResize = () => setWindowWidth(window.innerWidth);
     window.addEventListener('resize', handleResize);
@@ -58,12 +92,12 @@ function SignupPage() {
           <h2 style={{ fontSize: isMobile ? '28px' : '36px', marginBottom: '10px' }}>Get started now</h2>
           <p style={{ marginBottom: '30px', opacity: 0.7 }}>Please enter your details.</p>
           
-          <form style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
-            <input type="text" placeholder="Please enter your name" style={inputStyle} />
-            <input type="email" placeholder="Please enter your email" style={inputStyle} />
-            <input type="password" placeholder="Password" style={inputStyle} />
-            <input type="password" placeholder="Confirm Password" style={inputStyle} />
-            <input type="tel" placeholder="Phone number" style={inputStyle} />
+          <form style={{ display: 'flex', flexDirection: 'column', gap: '15px' }} onSubmit={handleSignup}>
+            <input type="text" placeholder="Please enter your name" style={inputStyle} value={username} onChange={(e) => setUsername(e.target.value)} />
+            <input type="email" placeholder="Please enter your email" style={inputStyle} value={email} onChange={(e) => setEmail(e.target.value)} />
+            <input type="password" placeholder="Password" style={inputStyle} value={password} onChange={(e) => setPassword(e.target.value)} />
+            <input type="password" placeholder="Confirm Password" style={inputStyle} value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
+            <input type="tel" placeholder="Phone number" style={inputStyle} value={phoneNum} onChange={(e) => setPhoneNum(e.target.value)} />
             
             <label style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '14px', cursor: 'pointer' }}>
               <input type="checkbox" required style={{ width: '18px', height: '18px' }} />
@@ -71,13 +105,13 @@ function SignupPage() {
             </label>
             
             <button 
-              type="button" 
+              type="submit" 
               style={{ 
                 marginTop: '10px', 
                 padding: '15px', 
                 borderRadius: '12px', 
                 border: 'none', 
-                background: '#000', // Đổi sang màu đen cho sang trọng hoặc giữ màu cũ của bạn
+                background: '#000', 
                 color: 'white', 
                 fontWeight: 'bold', 
                 cursor: 'pointer',

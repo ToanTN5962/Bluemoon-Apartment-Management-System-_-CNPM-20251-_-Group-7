@@ -1,16 +1,23 @@
 const express = require("express");
+const path = require("path");
+const route = require("./routes/route");
 const dotenv = require("dotenv");
 const cors = require("cors");
 
 dotenv.config();
-
-const route = require("./routes/route");
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// app.use(express.static(path.join(__dirname, 'public')));
+
+// app.post("/api/ping", (req, res) => {
+//   res.json({ message: "pong" });
+// });
+
 
 // Initialize routes
 route(app);

@@ -1,12 +1,82 @@
+// const prisma = require("../prisma/client");
+
+// // POST /auth/signup
+// //router.post("/signup", authController.signup);
+// const signup = async (req, res) => {
+//   try {
+//     const { fullName, email, password, phoneNum } = req.body;
+
+//     if (!email || !password) {
+//       return res.status(400).json({ message: "Missing email or password" });
+//     }
+
+//     const existedUser = await prisma.user.findUnique({
+//       where: { email }
+//     });
+
+//     if (existedUser) {
+//       return res.status(409).json({ message: "Email already exists" });
+//     }
+
+//     const user = await prisma.user.create({
+//       data: {
+//         fullName,
+//         email,
+//         password, // tạm thời chưa hash
+//         phoneNum
+//       }
+//     });
+
+//     res.status(201).json({
+//       message: "Signup success",
+//       user
+//     });
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).json({ message: "Server error" });
+//   }
+// };
+
+// // POST /auth/login
+// const login = async (req, res) => {
+//   try {
+//     const { email, password } = req.body;
+
+//     const user = await prisma.user.findUnique({
+//       where: { email }
+//     });
+
+//     if (!user || user.password !== password) {
+//       return res.status(401).json({ message: "Invalid credentials" });
+//     }
+
+//     res.json({
+//       message: "Login success",
+//       user
+//     });
+//   } catch (err) {
+//     res.status(500).json({ message: "Server error" });
+//   }
+// };
+
+// module.exports = {
+//   signup,
+//   login
+// };
+
 const prisma = require("../prisma/client");
 
-// POST /auth/register
-exports.register = async (req, res) => {
+/**
+ * POST /api/auth/signup
+ */
+const signup = async (req, res) => {
   try {
     const { fullName, email, password, phoneNum } = req.body;
 
     if (!email || !password) {
-      return res.status(400).json({ message: "Missing email or password" });
+      return res.status(400).json({
+        message: "Missing email or password"
+      });
     }
 
     const existedUser = await prisma.user.findUnique({
@@ -14,46 +84,68 @@ exports.register = async (req, res) => {
     });
 
     if (existedUser) {
-      return res.status(409).json({ message: "Email already exists" });
+      return res.status(409).json({
+        message: "Email already exists"
+      });
     }
 
     const user = await prisma.user.create({
       data: {
         fullName,
         email,
-        password, // tạm thời chưa hash
+        password, // TODO: hash password
         phoneNum
       }
     });
 
-    res.status(201).json({
-      message: "Register success",
+    return res.status(201).json({
+      message: "Signup success",
       user
     });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: "Server error" });
+  } catch (error) {
+    console.error("Signup error:", error);
+    return res.status(500).json({
+      message: "Internal server error"
+    });
   }
 };
 
-// POST /auth/login
-exports.login = async (req, res) => {
+/**
+ * POST /api/auth/login
+ */
+const login = async (req, res) => {
   try {
     const { email, password } = req.body;
+
+    if (!email || !password) {
+      return res.status(400).json({
+        message: "Missing email or password"
+      });
+    }
 
     const user = await prisma.user.findUnique({
       where: { email }
     });
 
     if (!user || user.password !== password) {
-      return res.status(401).json({ message: "Invalid credentials" });
+      return res.status(401).json({
+        message: "Invalid credentials"
+      });
     }
 
-    res.json({
+    return res.json({
       message: "Login success",
       user
     });
-  } catch (err) {
-    res.status(500).json({ message: "Server error" });
+  } catch (error) {
+    console.error("Login error:", error);
+    return res.status(500).json({
+      message: "Internal server error"
+    });
   }
+};
+
+module.exports = {
+  signup,
+  login
 };
