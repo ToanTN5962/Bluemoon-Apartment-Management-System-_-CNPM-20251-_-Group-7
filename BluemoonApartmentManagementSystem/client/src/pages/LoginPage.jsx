@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import loginBg from '../assets/images/login-bg.jpg';
 
 function LoginPage() {
+  const navigate = useNavigate();
   // 1. Tạo state để theo dõi độ rộng màn hình
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
@@ -101,20 +102,25 @@ function LoginPage() {
             </a>
 
             <button
-              type="button"
-              style={{
-                marginTop: '20px',
-                padding: '15px',
-                borderRadius: '8px',
-                border: 'none',
-                background: '#5e81ff',
-                color: 'white',
-                fontWeight: 'bold',
-                cursor: 'pointer'
-              }}
-            >
-              Log in
-            </button>
+            type="button"
+            onClick={() => {
+              // Ở đây bạn có thể thêm logic kiểm tra login thật sau này
+              // Hiện tại chỉ demo chuyển trang
+              navigate('/after-login');
+            }}
+            style={{
+              marginTop: '20px',
+              padding: '15px',
+              borderRadius: '8px',
+              border: 'none',
+              background: '#5e81ff',
+              color: 'white',
+              fontWeight: 'bold',
+              cursor: 'pointer'
+            }}
+          >
+            Sign in
+          </button>
 
             <p style={{ textAlign: 'center', marginTop: '20px', color: '#000' }}>
               Don't have an account? <Link to="/signup" style={{ color: '#5e81ff', fontWeight: '600' }}>Sign up</Link>

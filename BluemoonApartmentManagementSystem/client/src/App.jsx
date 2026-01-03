@@ -5,6 +5,7 @@ import SignupPage from './pages/SignupPage';
 import ForgotPasswordEmail from './pages/ForgotPasswordEmail';     
 import ForgotPasswordVerify from './pages/ForgotPasswordVerify';   
 import ForgotPasswordReset from './pages/ForgotPasswordReset';     
+import AfterLoginPage from './pages/AfterLoginPage';
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
         <Route path="/forgot-password/email" element={<ForgotPasswordEmail />} />
         <Route path="/forgot-password/verify" element={<ForgotPasswordVerify />} />
         <Route path="/forgot-password/reset" element={<ForgotPasswordReset />} />
+        <Route path="/after-login" element={<AfterLoginPage/>} />
       </Routes>
     </Router>
   );
