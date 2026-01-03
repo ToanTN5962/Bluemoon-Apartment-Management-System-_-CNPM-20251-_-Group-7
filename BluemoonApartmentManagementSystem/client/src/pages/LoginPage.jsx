@@ -6,6 +6,38 @@ function LoginPage() {
   // 1. Tạo state để theo dõi độ rộng màn hình
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
+  // Các state để lấy giá trị từ form truyền sang backend 
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+
+  const handleLogin = async(e) => {
+    e.preventDefault();
+
+    // Gửi yêu cầu đăng nhập đến backend
+    try {
+      const response = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({username, password}),
+      });
+
+      const data = await response.json();
+      if(!response.ok){
+        alert(data.message || "Login failed");
+        return;
+      }
+
+      // Xử lý khi đăng nhập thành công
+      console.log("Login successful:", data);
+    }
+
+    catch (error){
+      console.error("Error during login:", error);
+    }
+  }
+
   useEffect(() => {
     const handleResize = () => setWindowWidth(window.innerWidth);
     window.addEventListener('resize', handleResize);
@@ -47,16 +79,20 @@ function LoginPage() {
           <h2 style={{ fontSize: isMobile ? '28px' : '36px', marginBottom: '10px', color: '#000' }}>Welcome back</h2>
           <p style={{ marginBottom: '40px', opacity: 0.7, color: '#000' }}>Please enter your details.</p>
 
-          <form style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+          <form style={{ display: 'flex', flexDirection: 'column', gap: '20px' }} onSubmit={handleLogin}>
             <input
               type="email"
               placeholder="Please enter your email"
               style={{ padding: '15px', borderRadius: '8px', border: '1px solid #ddd', outline: 'none' }}
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
             />
             <input
               type="password"
               placeholder="••••••••"
               style={{ padding: '15px', borderRadius: '8px', border: '1px solid #ddd', outline: 'none' }}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
             />
             <a style={{ alignSelf: 'flex-end', color: '#5e81ff', cursor: 'pointer' }}>
               <Link to="/forgot-password/email" style={{ color: '#5e81ff', textDecoration: 'none' }}>
@@ -77,7 +113,7 @@ function LoginPage() {
                 cursor: 'pointer'
               }}
             >
-              Sign in
+              Log in
             </button>
 
             <p style={{ textAlign: 'center', marginTop: '20px', color: '#000' }}>

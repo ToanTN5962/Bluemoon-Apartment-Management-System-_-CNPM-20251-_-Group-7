@@ -1,7 +1,8 @@
 const prisma = require("../prisma/client");
 
-// POST /auth/register
-exports.register = async (req, res) => {
+// POST /auth/signup
+//router.post("/signup", authController.signup);
+const signup = async (req, res) => {
   try {
     const { fullName, email, password, phoneNum } = req.body;
 
@@ -27,7 +28,7 @@ exports.register = async (req, res) => {
     });
 
     res.status(201).json({
-      message: "Register success",
+      message: "Signup success",
       user
     });
   } catch (err) {
@@ -37,7 +38,7 @@ exports.register = async (req, res) => {
 };
 
 // POST /auth/login
-exports.login = async (req, res) => {
+const login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
@@ -56,4 +57,9 @@ exports.login = async (req, res) => {
   } catch (err) {
     res.status(500).json({ message: "Server error" });
   }
+};
+
+module.exports = {
+  signup,
+  login
 };
