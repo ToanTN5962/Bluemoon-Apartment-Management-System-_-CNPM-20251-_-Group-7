@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import loginBg from '../assets/images/login-bg.jpg';
 
 function LoginPage() {
+  const navigate = useNavigate();
   // 1. Tạo state để theo dõi độ rộng màn hình
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 

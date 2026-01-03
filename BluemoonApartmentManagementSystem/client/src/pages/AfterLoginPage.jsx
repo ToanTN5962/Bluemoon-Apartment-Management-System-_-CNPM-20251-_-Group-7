@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import bluemoonBg from '../assets/images/afterLogin-bg.jpg';
 
-function DashboardPage() {
+function AfterLoginPage() {
+  const navigate = useNavigate();
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
   useEffect(() => {
@@ -72,10 +74,7 @@ function DashboardPage() {
               e.currentTarget.style.background = 'transparent';
               e.currentTarget.style.transform = 'scale(1)';
             }}
-            onClick={() => {
-              // TODO: Chuyển đến trang "Các khoản thu"
-              alert('Chuyển đến trang Các khoản thu');
-            }}
+            onClick={() => navigate('/revenues')}
           >
             Các khoản thu
           </button>
@@ -103,10 +102,7 @@ function DashboardPage() {
               e.currentTarget.style.background = 'transparent';
               e.currentTarget.style.transform = 'scale(1)';
             }}
-            onClick={() => {
-              // TODO: Chuyển đến trang "Thông tin hộ gia đình"
-              alert('Chuyển đến trang Thông tin hộ gia đình');
-            }}
+            onClick={() => navigate('/household-info')}
           >
             Thông tin hộ gia đình
           </button>
@@ -116,4 +112,4 @@ function DashboardPage() {
   );
 }
 
-export default DashboardPage;
+export default AfterLoginPage;

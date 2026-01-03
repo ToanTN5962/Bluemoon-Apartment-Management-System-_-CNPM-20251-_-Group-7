@@ -17,7 +17,7 @@ function App() {
         <Route path="/forgot-password/email" element={<ForgotPasswordEmail />} />
         <Route path="/forgot-password/verify" element={<ForgotPasswordVerify />} />
         <Route path="/forgot-password/reset" element={<ForgotPasswordReset />} />
-        <Route path="/dashboard" element={<AfterLoginPage/>} />
+        <Route path="/after-login" element={<AfterLoginPage/>} />
       </Routes>
     </Router>
   );
