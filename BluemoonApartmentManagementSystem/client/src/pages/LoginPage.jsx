@@ -69,7 +69,7 @@ function LoginPage() {
             onClick={() => {
               // Ở đây bạn có thể thêm logic kiểm tra login thật sau này
               // Hiện tại chỉ demo chuyển trang
-              navigate('/dashboard');
+              navigate('/after-login');
             }}
             style={{
               marginTop: '20px',
