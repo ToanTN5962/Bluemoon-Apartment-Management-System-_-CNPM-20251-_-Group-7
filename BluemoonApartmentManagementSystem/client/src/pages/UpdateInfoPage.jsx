@@ -12,8 +12,9 @@ export default function UpdateInfoPage() {
     identityNumber: '',
     phoneNumber2: '',
     roomNumber: '',
-    DOB: '',
-    familyRole: 'owner'
+    Date_of_birth: '',
+    familyRole: 'owner',
+    status: 'permanent'
   });
 
   const [loading, setLoading] = useState(false);
@@ -44,7 +45,7 @@ export default function UpdateInfoPage() {
       alert('Please enter your full name');
       return;
     }
-    if (!formData.dateOfBirth.trim()) {
+    if (!formData.Date_of_birth.trim()) {
       alert('Please enter your date of birth');
       return;
     }
@@ -112,7 +113,7 @@ export default function UpdateInfoPage() {
       >
         {/* Overlay với backdrop blur */}
         <div style={{
-          backdropFilter: 'blur(1px) saturate(150%)',
+          backdropFilter: 'blur(5px) saturate(150%)',
           backgroundColor: 'rgba(255, 255, 255, 0)',
           padding: '60px 80px',
           minHeight: '700px'
@@ -356,7 +357,7 @@ export default function UpdateInfoPage() {
                 color: '#1e3a8a',
                 textAlign: 'left'
               }}>
-                Phone Number
+                Phone Number 1
               </label>
               <input
                 type="tel"
@@ -449,6 +450,45 @@ export default function UpdateInfoPage() {
               >
                 <option value="owner">Owner</option>
                 <option value="member">Member</option>
+              </select>
+            </div>
+
+          {/* status */}
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '30px'
+            }}>
+              <label style={{
+                width: '180px',
+                fontSize: '18px',
+                fontWeight: '600',
+                color: '#1e3a8a',
+                textAlign: 'left'
+              }}>
+                status
+              </label>
+              <select
+                name="statusRole"
+                value={formData.statusRole}
+                onChange={handleChange}
+                style={{
+                  flex: 1,
+                  padding: '18px 24px',
+                  fontSize: '16px',
+                  border: '2px solid rgba(255, 255, 255, 0.5)',
+                  borderRadius: '12px',
+                  backgroundColor: 'rgba(255, 255, 255, 0)',
+                  outline: 'none',
+                  boxShadow: '0 2px 8px rgba(0,0,0,0)',
+                  color: '#1e3a8a',
+                  fontWeight: '500',
+                  backdropFilter: 'blur(5px)',
+                  cursor: 'pointer'
+                }}
+              >
+                <option value="owner">Permanent</option>
+                <option value="member">Temporary</option>
               </select>
             </div>
 

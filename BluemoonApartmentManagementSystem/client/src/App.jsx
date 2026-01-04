@@ -8,6 +8,7 @@ import ForgotPasswordReset from './pages/ForgotPasswordReset';
 import AfterLoginPage from './pages/AfterLoginPage';
 import UserPage from './pages/UserPage';
 import UpdateInfoPage from './pages/UpdateInfoPage';
+import AdminPage from './pages/AdminPage';
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
         <Route path="/forgot-password/reset" element={<ForgotPasswordReset />} />
         <Route path="/after-login" element={<AfterLoginPage/>} />
         <Route path="/user" element={<UserPage />} />
+        <Route path="/admin" element={<AdminPage />} />
         <Route path="update-info" element={<UpdateInfoPage/>}/>
       </Routes>
     </Router>

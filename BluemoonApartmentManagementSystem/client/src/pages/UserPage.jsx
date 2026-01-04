@@ -29,7 +29,7 @@ function UserPage() {
   const handleLogout = () => {
     // Xóa thông tin user từ localStorage và chuyển về trang login
     localStorage.removeItem('user');
-    navigate('/login');
+    navigate('/');
   };
 
   return (

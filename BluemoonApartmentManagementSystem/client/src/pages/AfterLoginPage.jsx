@@ -9,8 +9,10 @@ function AfterLoginPage() {
     const storedUser = localStorage.getItem('user');
     
     if (storedUser) {
+      /*:)))))) muốn xem AdminPage thì thay cái dưới này là được nhé*/
       // Nếu đã đăng nhập, chuyển hướng đến UserPage
-      navigate('/user', { replace: true });
+      //Muốn xem admin thì đổi thành '/admin' 
+      navigate('/user');
     } else {
       // Nếu chưa đăng nhập, chuyển về trang login
       navigate('/login', { replace: true });
