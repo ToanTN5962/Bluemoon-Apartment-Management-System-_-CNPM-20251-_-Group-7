@@ -55,7 +55,14 @@ function LoginPage() {
         console.log('Login successful:', data);
         localStorage.setItem('user', JSON.stringify(data));
         // Chuyển hướng sau khi đăng nhập thành công
-        navigate('/after-login');
+        if(data.user.role === 'ADMIN'){
+          navigate('/admin');
+          return;
+        }
+        else {
+          navigate('/user');
+          return;
+        }
       }
     } catch (err) {
       setError('Cannot connect to server. Please check your connection.');
