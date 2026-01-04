@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
-import backgroundImage from '../assets/images/updateInfor-bg.jpg';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import backgroundImage from '../assets/images/updateInfo-bg.jpg';
 
 export default function UpdateInfoPage() {
+  const navigate = useNavigate();
   
   const [formData, setFormData] = useState({
     fullName: '',
@@ -13,6 +15,22 @@ export default function UpdateInfoPage() {
     familyRole: 'owner'
   });
 
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const storedUser = localStorage.getItem('user');
+    if (!storedUser) {
+      navigate('/login');
+      return;
+    }
+
+    const userData = JSON.parse(storedUser);
+    setFormData(prev => ({
+      ...prev,
+      email: userData.email || ''
+    }));
+  }, [navigate]);
+
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -20,41 +38,137 @@ export default function UpdateInfoPage() {
     });
   };
 
-  const handleSubmit = () => {
-    console.log('Form submitted:', formData);
-    alert('Thông tin đã được gửi!');
+  const handleSubmit = async () => {
+    if (!formData.fullName.trim()) {
+      alert('Please enter your full name');
+      return;
+    }
+    if (!formData.phoneNumber1.trim()) {
+      alert('Please enter your phone number');
+      return;
+    }
+    if (!formData.identityNumber.trim()) {
+      alert('Please enter your identity number');
+      return;
+    }
+    if (!formData.roomNumber.trim()) {
+      alert('Please enter your room number');
+      return;
+    }
+
+    setLoading(true);
+    
+    try {
+      const response = await fetch('http://localhost:3000/api/user/update-info', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData)
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        alert('Information updated successfully!');
+        navigate('/user');
+      } else {
+        alert(data.message || 'Update failed. Please try again.');
+      }
+    } catch (err) {
+      console.error('Update error:', err);
+      alert('Cannot connect to server. Please check your connection.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <div 
-      className="min-h-screen flex items-center justify-center p-4"
       style={{
+        minHeight: '100vh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '20px',
         background: 'linear-gradient(135deg, #1e3a8a 0%, #1e40af 50%, #2563eb 100%)'
       }}
     >
       <div 
-        className="w-full max-w-4xl rounded-3xl overflow-hidden shadow-2xl"
         style={{
+          width: '100%',
+          maxWidth: '1200px',
+          borderRadius: '30px',
+          overflow: 'hidden',
+          boxShadow: '0 20px 60px rgba(0,0,0,0.3)',
           backgroundImage: `url(${backgroundImage})`,
           backgroundSize: 'cover',
-          backgroundPosition: 'center'
+          backgroundPosition: 'center',
+          position: 'relative'
         }}
       >
-        <div className="backdrop-blur-sm bg-white/80 p-8 md:p-12">
-          {/* Header */}
-          <div className="flex items-center gap-3 mb-8">
-            <div className="text-4xl">🏢</div>
-            <h1 className="text-3xl md:text-4xl font-bold text-blue-600">Bluemoon</h1>
+        {/* Overlay với backdrop blur */}
+        <div style={{
+          backdropFilter: 'blur(8px)',
+          backgroundColor: 'rgba(255, 255, 255, 0)',
+          padding: '60px 80px',
+          minHeight: '700px'
+        }}>
+          
+          {/* Logo Header */}
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '12px',
+            marginBottom: '40px'
+          }}>
+            <svg width="50" height="50" viewBox="0 0 24 24" fill="none" stroke="#4c7cff" strokeWidth="2">
+              <rect x="4" y="2" width="7" height="20" />
+              <rect x="13" y="6" width="7" height="16" />
+              <path d="M6 8h2M6 12h2M6 16h2M15 10h2M15 14h2M15 18h2" />
+            </svg>
+            <h1 style={{
+              fontSize: '42px',
+              fontWeight: '700',
+              color: '#4c7cff',
+              margin: 0
+            }}>
+              Bluemoon
+            </h1>
           </div>
 
-          <h2 className="text-3xl md:text-5xl font-bold text-blue-600 text-center mb-10">
+          {/* Title */}
+          <h2 style={{
+            fontSize: '48px',
+            fontWeight: '700',
+            color: '#4c7cff',
+            textAlign: 'center',
+            marginBottom: '50px',
+            lineHeight: '1.2'
+          }}>
             Information Update Form
           </h2>
 
-          {/* Form */}
-          <div className="space-y-5">
-            <div className="flex flex-col md:flex-row md:items-center gap-4">
-              <label className="md:w-48 text-blue-900 font-semibold text-lg">
+          {/* Form Container */}
+          <div style={{
+            maxWidth: '700px',
+            margin: '0 auto',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '25px'
+          }}>
+            
+            {/* Full Name */}
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '30px'
+            }}>
+              <label style={{
+                width: '180px',
+                fontSize: '18px',
+                fontWeight: '600',
+                color: '#1e3a8a',
+                textAlign: 'left'
+              }}>
                 Full Name
               </label>
               <input
@@ -63,12 +177,35 @@ export default function UpdateInfoPage() {
                 value={formData.fullName}
                 onChange={handleChange}
                 placeholder="Please enter your name"
-                className="flex-1 px-6 py-4 rounded-xl border-2 border-gray-300 focus:border-blue-500 focus:outline-none text-gray-700 placeholder-gray-400"
+                style={{
+                  flex: 1,
+                  padding: '18px 24px',
+                  fontSize: '16px',
+                  border: '2px solid rgba(255, 255, 255, 0)',
+                  borderRadius: '12px',
+                  backgroundColor: 'rgba(255, 255, 255, 0)',
+                  outline: 'none',
+                  boxShadow: '0 2px 8px rgba(0,0,0,0)',
+                  color: '#1e3a8a',
+                  fontWeight: '500',
+                  backdropFilter: 'blur(5px)'
+                }}
               />
             </div>
 
-            <div className="flex flex-col md:flex-row md:items-center gap-4">
-              <label className="md:w-48 text-blue-900 font-semibold text-lg">
+            {/* Email */}
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '30px'
+            }}>
+              <label style={{
+                width: '180px',
+                fontSize: '18px',
+                fontWeight: '600',
+                color: '#1e3a8a',
+                textAlign: 'left'
+              }}>
                 Email
               </label>
               <input
@@ -77,12 +214,37 @@ export default function UpdateInfoPage() {
                 value={formData.email}
                 onChange={handleChange}
                 placeholder="Please enter your email"
-                className="flex-1 px-6 py-4 rounded-xl border-2 border-gray-300 focus:border-blue-500 focus:outline-none text-gray-700 placeholder-gray-400"
+                disabled
+                style={{
+                  flex: 1,
+                  padding: '18px 24px',
+                  fontSize: '16px',
+                  border: '2px solid rgba(255, 255, 255, 0.4)',
+                  borderRadius: '12px',
+                  backgroundColor: 'rgba(240, 240, 240, 0)',
+                  outline: 'none',
+                  boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+                  color: '#1e3a8a',
+                  fontWeight: '500',
+                  backdropFilter: 'blur(5px)',
+                  cursor: 'not-allowed'
+                }}
               />
             </div>
 
-            <div className="flex flex-col md:flex-row md:items-center gap-4">
-              <label className="md:w-48 text-blue-900 font-semibold text-lg">
+            {/* Phone Number */}
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '30px'
+            }}>
+              <label style={{
+                width: '180px',
+                fontSize: '18px',
+                fontWeight: '600',
+                color: '#1e3a8a',
+                textAlign: 'left'
+              }}>
                 Phone Number
               </label>
               <input
@@ -91,12 +253,33 @@ export default function UpdateInfoPage() {
                 value={formData.phoneNumber1}
                 onChange={handleChange}
                 placeholder="************"
-                className="flex-1 px-6 py-4 rounded-xl border-2 border-gray-300 focus:border-blue-500 focus:outline-none text-gray-700 placeholder-gray-400"
+                style={{
+                  flex: 1,
+                  padding: '18px 24px',
+                  fontSize: '16px',
+                  border: 'none',
+                  borderRadius: '12px',
+                  backgroundColor: 'rgba(255, 255, 255, 0)',
+                  outline: 'none',
+                  boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+                  color: '#333'
+                }}
               />
             </div>
 
-            <div className="flex flex-col md:flex-row md:items-center gap-4">
-              <label className="md:w-48 text-blue-900 font-semibold text-lg">
+            {/* Identity Number */}
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '30px'
+            }}>
+              <label style={{
+                width: '180px',
+                fontSize: '18px',
+                fontWeight: '600',
+                color: '#1e3a8a',
+                textAlign: 'left'
+              }}>
                 Identity Number
               </label>
               <input
@@ -105,12 +288,33 @@ export default function UpdateInfoPage() {
                 value={formData.identityNumber}
                 onChange={handleChange}
                 placeholder="************"
-                className="flex-1 px-6 py-4 rounded-xl border-2 border-gray-300 focus:border-blue-500 focus:outline-none text-gray-700 placeholder-gray-400"
+                style={{
+                  flex: 1,
+                  padding: '18px 24px',
+                  fontSize: '16px',
+                  border: 'none',
+                  borderRadius: '12px',
+                  backgroundColor: 'rgba(255, 255, 255, 0)',
+                  outline: 'none',
+                  boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+                  color: '#333'
+                }}
               />
             </div>
 
-            <div className="flex flex-col md:flex-row md:items-center gap-4">
-              <label className="md:w-48 text-blue-900 font-semibold text-lg">
+            {/* Phone Number 2 */}
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '30px'
+            }}>
+              <label style={{
+                width: '180px',
+                fontSize: '18px',
+                fontWeight: '600',
+                color: '#1e3a8a',
+                textAlign: 'left'
+              }}>
                 Phone Number
               </label>
               <input
@@ -119,12 +323,33 @@ export default function UpdateInfoPage() {
                 value={formData.phoneNumber2}
                 onChange={handleChange}
                 placeholder="************"
-                className="flex-1 px-6 py-4 rounded-xl border-2 border-gray-300 focus:border-blue-500 focus:outline-none text-gray-700 placeholder-gray-400"
+                style={{
+                  flex: 1,
+                  padding: '18px 24px',
+                  fontSize: '16px',
+                  border: 'none',
+                  borderRadius: '12px',
+                  backgroundColor: 'rgba(255, 255, 255, 0)',
+                  outline: 'none',
+                  boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+                  color: '#333'
+                }}
               />
             </div>
 
-            <div className="flex flex-col md:flex-row md:items-center gap-4">
-              <label className="md:w-48 text-blue-900 font-semibold text-lg">
+            {/* Room Number */}
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '30px'
+            }}>
+              <label style={{
+                width: '180px',
+                fontSize: '18px',
+                fontWeight: '600',
+                color: '#1e3a8a',
+                textAlign: 'left'
+              }}>
                 Room Number
               </label>
               <input
@@ -133,19 +358,53 @@ export default function UpdateInfoPage() {
                 value={formData.roomNumber}
                 onChange={handleChange}
                 placeholder="************"
-                className="flex-1 px-6 py-4 rounded-xl border-2 border-gray-300 focus:border-blue-500 focus:outline-none text-gray-700 placeholder-gray-400"
+                style={{
+                  flex: 1,
+                  padding: '18px 24px',
+                  fontSize: '16px',
+                  border: 'none',
+                  borderRadius: '12px',
+                  backgroundColor: 'rgba(255, 255, 255, 0)',
+                  outline: 'none',
+                  boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+                  color: '#333'
+                }}
               />
             </div>
 
-            <div className="flex flex-col md:flex-row md:items-center gap-4">
-              <label className="md:w-48 text-blue-900 font-semibold text-lg">
+            {/* Family Role */}
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '30px'
+            }}>
+              <label style={{
+                width: '180px',
+                fontSize: '18px',
+                fontWeight: '600',
+                color: '#1e3a8a',
+                textAlign: 'left'
+              }}>
                 Family Role
               </label>
               <select
                 name="familyRole"
                 value={formData.familyRole}
                 onChange={handleChange}
-                className="flex-1 px-6 py-4 rounded-xl border-2 border-gray-300 focus:border-blue-500 focus:outline-none text-gray-700 bg-white"
+                style={{
+                  flex: 1,
+                  padding: '18px 24px',
+                  fontSize: '16px',
+                  border: '2px solid rgba(255, 255, 255, 0.5)',
+                  borderRadius: '12px',
+                  backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                  outline: 'none',
+                  boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+                  color: '#1e3a8a',
+                  fontWeight: '500',
+                  backdropFilter: 'blur(5px)',
+                  cursor: 'pointer'
+                }}
               >
                 <option value="owner">Owner</option>
                 <option value="member">Member</option>
@@ -153,12 +412,39 @@ export default function UpdateInfoPage() {
             </div>
 
             {/* Submit Button */}
-            <div className="flex justify-center pt-6">
+            <div style={{
+              display: 'flex',
+              justifyContent: 'center',
+              marginTop: '30px'
+            }}>
               <button
                 onClick={handleSubmit}
-                className="bg-blue-600 hover:bg-blue-700 text-white font-bold text-xl px-16 py-4 rounded-xl shadow-lg transition-all duration-300 transform hover:scale-105"
+                disabled={loading}
+                style={{
+                  padding: '20px 80px',
+                  fontSize: '22px',
+                  fontWeight: '700',
+                  color: 'white',
+                  backgroundColor: '#4c7cff',
+                  border: 'none',
+                  borderRadius: '15px',
+                  cursor: loading ? 'not-allowed' : 'pointer',
+                  boxShadow: '0 8px 20px rgba(76, 124, 255, 0.4)',
+                  transition: 'all 0.3s ease',
+                  opacity: loading ? 0.7 : 1
+                }}
+                onMouseOver={(e) => {
+                  if (!loading) {
+                    e.currentTarget.style.transform = 'translateY(-2px)';
+                    e.currentTarget.style.boxShadow = '0 12px 30px rgba(76, 124, 255, 0.5)';
+                  }
+                }}
+                onMouseOut={(e) => {
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow = '0 8px 20px rgba(76, 124, 255, 0.4)';
+                }}
               >
-                Submit
+                {loading ? 'Submitting...' : 'Submit'}
               </button>
             </div>
           </div>
