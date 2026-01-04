@@ -89,7 +89,7 @@ export default function UpdateInfoPage() {
         alignItems: 'center',
         justifyContent: 'center',
         padding: '20px',
-        background: 'linear-gradient(135deg, #1e3a8a 0%, #1e40af 50%, #2563eb 100%)'
+        background: 'linear-gradient(135deg, #1e3a8a 0%, #283664ff 50%, #162441ff 100%)'
       }}
     >
       <div 
@@ -98,7 +98,7 @@ export default function UpdateInfoPage() {
           maxWidth: '1200px',
           borderRadius: '30px',
           overflow: 'hidden',
-          boxShadow: '0 20px 60px rgba(0,0,0,0.3)',
+          boxShadow: '0 20px 60px rgba(142, 139, 139, 0.3)',
           backgroundImage: `url(${backgroundImage})`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
@@ -107,7 +107,7 @@ export default function UpdateInfoPage() {
       >
         {/* Overlay với backdrop blur */}
         <div style={{
-          backdropFilter: 'blur(8px)',
+          backdropFilter: 'blur(1px) saturate(150%)',
           backgroundColor: 'rgba(255, 255, 255, 0)',
           padding: '60px 80px',
           minHeight: '700px'
@@ -181,7 +181,7 @@ export default function UpdateInfoPage() {
                   flex: 1,
                   padding: '18px 24px',
                   fontSize: '16px',
-                  border: '2px solid rgba(255, 255, 255, 0)',
+                  border: '2px solid rgba(255, 255, 255, 0.5)',
                   borderRadius: '12px',
                   backgroundColor: 'rgba(255, 255, 255, 0)',
                   outline: 'none',
@@ -257,7 +257,7 @@ export default function UpdateInfoPage() {
                   flex: 1,
                   padding: '18px 24px',
                   fontSize: '16px',
-                  border: 'none',
+                  border: '2px solid rgba(255, 255, 255, 0.5)',
                   borderRadius: '12px',
                   backgroundColor: 'rgba(255, 255, 255, 0)',
                   outline: 'none',
@@ -292,7 +292,7 @@ export default function UpdateInfoPage() {
                   flex: 1,
                   padding: '18px 24px',
                   fontSize: '16px',
-                  border: 'none',
+                  border: '2px solid rgba(255, 255, 255, 0.5)',
                   borderRadius: '12px',
                   backgroundColor: 'rgba(255, 255, 255, 0)',
                   outline: 'none',
@@ -327,7 +327,7 @@ export default function UpdateInfoPage() {
                   flex: 1,
                   padding: '18px 24px',
                   fontSize: '16px',
-                  border: 'none',
+                  border: '2px solid rgba(255, 255, 255, 0.5)',
                   borderRadius: '12px',
                   backgroundColor: 'rgba(255, 255, 255, 0)',
                   outline: 'none',
@@ -362,7 +362,7 @@ export default function UpdateInfoPage() {
                   flex: 1,
                   padding: '18px 24px',
                   fontSize: '16px',
-                  border: 'none',
+                  border: '2px solid rgba(255, 255, 255, 0.5)',
                   borderRadius: '12px',
                   backgroundColor: 'rgba(255, 255, 255, 0)',
                   outline: 'none',
