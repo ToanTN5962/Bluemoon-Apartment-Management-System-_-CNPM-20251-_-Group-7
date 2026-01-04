@@ -11,13 +11,26 @@ function SignupPage() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [phoneNum, setPhoneNum] = useState("");
+  const [error, setError] = useState('');
 
   const handleSignup = async(e) => {
     e.preventDefault();
+    setError('');
+
+    // Kiểm tra hợp lệ dữ liệu trước khi gửi
+    if(!email.includes('@')) {
+      setError('Please enter a valid email.');
+      return;
+    }
+
+    if(password.length < 6) {
+      setError('Password must be at least 6 characters long.');
+      return;
+    }
 
     // Gửi yêu cầu đăng ký đến backend
     try {
-      const response = await fetch("/api/auth/signup", {
+      const response = await fetch("http://localhost:3000/api/auth/signup", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
