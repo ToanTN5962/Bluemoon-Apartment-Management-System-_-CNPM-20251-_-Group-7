@@ -36,7 +36,7 @@ function LoginPage() {
     }
 
     try {
-      const response = await fetch('http://localhost:3000/auth/login', {
+      const response = await fetch('http://localhost:3000/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password })
@@ -111,8 +111,6 @@ function LoginPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               style={{ padding: '15px', borderRadius: '8px', border: '1px solid #ddd', outline: 'none' }}
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
             />
             <input
               type="password"
@@ -120,8 +118,6 @@ function LoginPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               style={{ padding: '15px', borderRadius: '8px', border: '1px solid #ddd', outline: 'none' }}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
             />
             <a style={{ alignSelf: 'flex-end', color: '#5e81ff', cursor: 'pointer' }}>
               <Link to="/forgot-password/email" style={{ color: '#5e81ff', textDecoration: 'none' }}>

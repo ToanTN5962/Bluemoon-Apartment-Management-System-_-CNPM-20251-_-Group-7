@@ -1,5 +1,6 @@
 function route(app){
-    // app.use("/api/auth", require("./auth.route"));
+    console.log("Initializing routes...");
+    app.use("/api/auth", require("./auth.route"));
     app.use("/api/users", require("./user.route"));
     app.use("/api/residents", require("./resident.route"));
     app.use("/api/households", require("./household.route"));
