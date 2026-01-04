@@ -4,7 +4,7 @@ import backgroundImage from '../assets/images/updateInfo-bg.jpg';
 
 export default function UpdateInfoPage() {
   const navigate = useNavigate();
-  
+
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
@@ -12,6 +12,7 @@ export default function UpdateInfoPage() {
     identityNumber: '',
     phoneNumber2: '',
     roomNumber: '',
+    DOB: '',
     familyRole: 'owner'
   });
 
@@ -43,6 +44,10 @@ export default function UpdateInfoPage() {
       alert('Please enter your full name');
       return;
     }
+    if (!formData.dateOfBirth.trim()) {
+      alert('Please enter your date of birth');
+      return;
+    }
     if (!formData.phoneNumber1.trim()) {
       alert('Please enter your phone number');
       return;
@@ -57,7 +62,7 @@ export default function UpdateInfoPage() {
     }
 
     setLoading(true);
-    
+
     try {
       const response = await fetch('http://localhost:3000/api/user/update-info', {
         method: 'POST',
@@ -82,7 +87,7 @@ export default function UpdateInfoPage() {
   };
 
   return (
-    <div 
+    <div
       style={{
         minHeight: '100vh',
         display: 'flex',
@@ -92,7 +97,7 @@ export default function UpdateInfoPage() {
         background: 'linear-gradient(135deg, #1e3a8a 0%, #283664ff 50%, #162441ff 100%)'
       }}
     >
-      <div 
+      <div
         style={{
           width: '100%',
           maxWidth: '1200px',
@@ -112,7 +117,7 @@ export default function UpdateInfoPage() {
           padding: '60px 80px',
           minHeight: '700px'
         }}>
-          
+
           {/* Logo Header */}
           <div style={{
             display: 'flex',
@@ -155,7 +160,7 @@ export default function UpdateInfoPage() {
             flexDirection: 'column',
             gap: '25px'
           }}>
-            
+
             {/* Full Name */}
             <div style={{
               display: 'flex',
@@ -214,7 +219,7 @@ export default function UpdateInfoPage() {
                 value={formData.email}
                 onChange={handleChange}
                 placeholder="Please enter your email"
-                disabled
+                //disabled
                 style={{
                   flex: 1,
                   padding: '18px 24px',
@@ -227,11 +232,47 @@ export default function UpdateInfoPage() {
                   color: '#1e3a8a',
                   fontWeight: '500',
                   backdropFilter: 'blur(5px)',
-                  cursor: 'not-allowed'
+                  //cursor: 'not-allowed'
                 }}
               />
             </div>
 
+            {/* Date of Birth */}
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '30px'
+            }}>
+              <label style={{
+                width: '180px',
+                fontSize: '18px',
+                fontWeight: '600',
+                color: '#1e3a8a',
+                textAlign: 'left'
+              }}>
+                Date of Birth
+              </label>
+              <input
+                type="date"
+                name="dateOfBirth"
+                value={formData.dateOfBirth}
+                onChange={handleChange}
+                style={{
+                  flex: 1,
+                  padding: '18px 24px',
+                  fontSize: '16px',
+                  border: '2px solid rgba(255, 255, 255, 0.5)',
+                  borderRadius: '12px',
+                  backgroundColor: 'rgba(255, 255, 255, 0)',
+                  outline: 'none',
+                  boxShadow: '0 2px 8px rgba(0,0,0,0)',
+                  color: '#1e3a8a',
+                  fontWeight: '500',
+                  backdropFilter: 'blur(5px)',
+                  cursor: 'pointer'
+                }}
+              />
+            </div>
             {/* Phone Number */}
             <div style={{
               display: 'flex',
@@ -262,7 +303,7 @@ export default function UpdateInfoPage() {
                   backgroundColor: 'rgba(255, 255, 255, 0)',
                   outline: 'none',
                   boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-                  color: '#333'
+                  color: '#1e3a8a'
                 }}
               />
             </div>
@@ -297,7 +338,7 @@ export default function UpdateInfoPage() {
                   backgroundColor: 'rgba(255, 255, 255, 0)',
                   outline: 'none',
                   boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-                  color: '#333'
+                  color: '#1e3a8a'
                 }}
               />
             </div>
@@ -332,7 +373,7 @@ export default function UpdateInfoPage() {
                   backgroundColor: 'rgba(255, 255, 255, 0)',
                   outline: 'none',
                   boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-                  color: '#333'
+                  color: '#1e3a8a'
                 }}
               />
             </div>
@@ -367,7 +408,7 @@ export default function UpdateInfoPage() {
                   backgroundColor: 'rgba(255, 255, 255, 0)',
                   outline: 'none',
                   boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-                  color: '#333'
+                  color: '#1e3a8a'
                 }}
               />
             </div>
@@ -397,9 +438,9 @@ export default function UpdateInfoPage() {
                   fontSize: '16px',
                   border: '2px solid rgba(255, 255, 255, 0.5)',
                   borderRadius: '12px',
-                  backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                  backgroundColor: 'rgba(255, 255, 255, 0)',
                   outline: 'none',
-                  boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+                  boxShadow: '0 2px 8px rgba(0,0,0,0)',
                   color: '#1e3a8a',
                   fontWeight: '500',
                   backdropFilter: 'blur(5px)',
