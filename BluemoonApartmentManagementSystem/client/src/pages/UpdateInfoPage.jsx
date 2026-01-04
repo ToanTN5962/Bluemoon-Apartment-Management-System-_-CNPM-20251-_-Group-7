@@ -219,7 +219,7 @@ export default function UpdateInfoPage() {
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
-                placeholder="Please enter your email"
+                placeholder="Your email"
                 //disabled
                 style={{
                   flex: 1,
