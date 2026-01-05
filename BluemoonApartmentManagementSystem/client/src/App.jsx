@@ -9,6 +9,7 @@ import AfterLoginPage from './pages/AfterLoginPage';
 import UserPage from './pages/UserPage';
 import UpdateInfoPage from './pages/UpdateInfoPage';
 import AdminPage from './pages/AdminPage';
+import AccountPage from './pages/AccountPage';
 
 function App() {
   return (
@@ -23,7 +24,8 @@ function App() {
         <Route path="/after-login" element={<AfterLoginPage/>} />
         <Route path="/user" element={<UserPage />} />
         <Route path="/admin" element={<AdminPage />} />
-        <Route path="update-info" element={<UpdateInfoPage/>}/>
+        <Route path="/update-info" element={<UpdateInfoPage/>}/>
+        <Route path="/account" element={<AccountPage/>}/>
       </Routes>
     </Router>
   );
