@@ -1,20 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import backgroundImage from '../assets/images/updateInfo-bg.jpg';
+import { household, user } from '../../../server/src/prisma/client';
 
 export default function UpdateInfoPage() {
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
+    userId: '',
     fullName: '',
     email: '',
-    phoneNumber1: '',
+    phoneNum: '',
     identityNumber: '',
-    phoneNumber2: '',
     roomNumber: '',
-    Date_of_birth: '',
-    familyRole: 'owner',
-    status: 'permanent'
+    householdId: '',
+    dateOfBirth: '',
+    familyRole: 'OWNER',
+    status: 'PERMANENT'
   });
 
   const [loading, setLoading] = useState(false);
@@ -25,12 +27,20 @@ export default function UpdateInfoPage() {
       navigate('/login');
       return;
     }
-
-    const userData = JSON.parse(storedUser);
-    setFormData(prev => ({
-      ...prev,
-      email: userData.email || ''
-    }));
+    try {
+      const userData = JSON.parse(storedUser);
+      const actualId = userData.user ? userData.user.id : userData.id;
+      const actualEmail = userData.user ? userData.user.email : userData.email;
+      
+      setFormData(prev => ({
+        ...prev,
+        userId: actualId,  
+        email: actualEmail || ''
+      }));
+    } catch (err) {
+      console.error('Error parsing user data from localStorage:', err);
+      navigate('/login');
+    }
   }, [navigate]);
 
   const handleChange = (e) => {
@@ -41,31 +51,37 @@ export default function UpdateInfoPage() {
   };
 
   const handleSubmit = async () => {
+    
     if (!formData.fullName.trim()) {
-      alert('Please enter your full name');
-      return;
+      return alert('Please enter your full name');
     }
-    if (!formData.Date_of_birth.trim()) {
-      alert('Please enter your date of birth');
-      return;
-    }
-    if (!formData.phoneNumber1.trim()) {
-      alert('Please enter your phone number');
-      return;
+    if (!formData.dateOfBirth) {
+      return alert ('Please enter your date of birth');
     }
     if (!formData.identityNumber.trim()) {
-      alert('Please enter your identity number');
-      return;
+      return alert('Please enter your identity number');
     }
     if (!formData.roomNumber.trim()) {
-      alert('Please enter your room number');
-      return;
+      return alert('Please enter your room number');
     }
 
     setLoading(true);
 
+    const payload = {
+      userID: parseInt(formData.userId),
+      fullName: formData.fullName,
+      email: formData.email,
+      phoneNum: formData.phoneNum,
+      identificationNumber: formData.identityNumber,
+      roomNumber: formData.roomNumber,
+      householdId: parseInt(formData.householdId),
+      dateOfBirth: formData.dateOfBirth,
+      familyRole: formData.familyRole,
+      status: formData.status
+    };
+
     try {
-      const response = await fetch('http://localhost:3000/api/user/update-info', {
+      const response = await fetch('http://localhost:3000/api/user/request-update', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData)
@@ -74,7 +90,7 @@ export default function UpdateInfoPage() {
       const data = await response.json();
 
       if (response.ok) {
-        alert('Information updated successfully!');
+        alert('Request submitted successfully. Please wait for admin approval.');
         navigate('/user');
       } else {
         alert(data.message || 'Update failed. Please try again.');
@@ -291,10 +307,10 @@ export default function UpdateInfoPage() {
               </label>
               <input
                 type="tel"
-                name="phoneNumber1"
-                value={formData.phoneNumber1}
+                name="phoneNum"
+                value={formData.phoneNum}
                 onChange={handleChange}
-                placeholder="************"
+                placeholder="************ (Optional)"
                 style={{
                   flex: 1,
                   padding: '18px 24px',
@@ -309,7 +325,7 @@ export default function UpdateInfoPage() {
               />
             </div>
 
-            {/* Identity Number */}
+            {/* Identification Number */}
             <div style={{
               display: 'flex',
               alignItems: 'center',
@@ -322,12 +338,12 @@ export default function UpdateInfoPage() {
                 color: '#1e3a8a',
                 textAlign: 'left'
               }}>
-                Identity Number
+                Identification Number
               </label>
               <input
                 type="text"
-                name="identityNumber"
-                value={formData.identityNumber}
+                name="identificationNumber"
+                value={formData.identificationNumber}
                 onChange={handleChange}
                 placeholder="************"
                 style={{
@@ -344,41 +360,7 @@ export default function UpdateInfoPage() {
               />
             </div>
 
-            {/* Phone Number 2 */}
-            <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '30px'
-            }}>
-              <label style={{
-                width: '180px',
-                fontSize: '18px',
-                fontWeight: '600',
-                color: '#1e3a8a',
-                textAlign: 'left'
-              }}>
-                Phone Number 1
-              </label>
-              <input
-                type="tel"
-                name="phoneNumber2"
-                value={formData.phoneNumber2}
-                onChange={handleChange}
-                placeholder="************"
-                style={{
-                  flex: 1,
-                  padding: '18px 24px',
-                  fontSize: '16px',
-                  border: '2px solid rgba(255, 255, 255, 0.5)',
-                  borderRadius: '12px',
-                  backgroundColor: 'rgba(255, 255, 255, 0)',
-                  outline: 'none',
-                  boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-                  color: '#1e3a8a'
-                }}
-              />
-            </div>
-
+            
             {/* Room Number */}
             <div style={{
               display: 'flex',

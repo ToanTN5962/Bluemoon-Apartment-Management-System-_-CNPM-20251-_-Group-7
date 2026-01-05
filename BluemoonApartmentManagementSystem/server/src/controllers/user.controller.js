@@ -10,26 +10,54 @@ exports.getById = async (req, res) => {
   }));
 };
 
-exports.updateProfile = async (req, res) => {
-  const { id } = req.params;
-  const { fullName, phoneNum, email } = req.body; 
+// POST api/users/request-update
+exports.requestUpdateInfo = async (req, res) => {
+  const {userId, fullName, email, phoneNum, identificationNumber, householdId, roomNumber, dateOfBirth} = req.body;
+
+  const missingFields = [];
+  if (!fullName) missingFields.push("fullName");
+  if (!email) missingFields.push("email");
+  if (!identificationNumber) missingFields.push("identificationNumber");
+  if (!roomNumber) missingFields.push("roomNumber");
+  if (!dateOfBirth) missingFields.push("dateOfBirth");
+
+  if (missingFields.length > 0) {
+    return res.status(400).json({
+      message: `Please provide ${missingFields.join(", ")}`
+    });
+  }
+
+  const birthDateObj = new Date(dateOfBirth);
+  if (isNaN(birthDateObj.getTime())) {
+    return res.status(400).json({
+      message: "Invalid dateOfBirth format. Please use a valid date."
+    });
+  }
+
   try {
-    const updatedUser = await prisma.user.update({
-      where: { id: parseInt(id) },
+    const newRequest = await prisma.updateInfo.create({
       data: { 
+        userId: parseInt(userId),
         fullName: fullName,
+        email: email,
         phoneNum: phoneNum,
+        identificationNumber: identificationNumber,
+        householdId: parseInt(householdId),
+        roomNumber: roomNumber,
+        dateOfBirth: birthDateObj
+        requestStatus: "PENDING"
       }
     });
-    res.status(200).json({
-      message: "Profile updated successfully.",
-      data: updatedUser
+    res.status(201).json({
+      message: "Request submitted successfully. Please wait for admin approval.",
+      data: newRequest
     });
+
   } catch (err) {
-    console.error("Error updating profile:", err);
-    if (err.code === 'P2025') {
+    console.error("Error creating update request:", err);
+    if (err.code === 'P2003') { // Foreign key constraint failed
       return res.status(404).json({
-        message: "User not found."
+        message: "User or household not found."
       });
     }
     res.status(500).json({
