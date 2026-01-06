@@ -126,11 +126,18 @@ function LoginPage() {
               onChange={(e) => setPassword(e.target.value)}
               style={{ padding: '15px', borderRadius: '8px', border: '1px solid #ddd', outline: 'none' }}
             />
-            <a style={{ alignSelf: 'flex-end', color: '#5e81ff', cursor: 'pointer' }}>
-              <Link to="/forgot-password/email" style={{ color: '#5e81ff', textDecoration: 'none' }}>
+            <div style={{ alignSelf: 'flex-end' }}>
+              <Link 
+                to="/forgot-password/email" 
+                style={{ 
+                  color: '#5e81ff', 
+                  textDecoration: 'none',
+                  cursor: 'pointer'   
+                }}
+              >
                 Forgot password
               </Link>
-            </a>
+            </div>
 
             <button
             type="submit"

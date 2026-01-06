@@ -3,7 +3,7 @@ const c = require("../controllers/user.controller");
 
 router.get("/", c.getAll);
 router.get("/:id", c.getById);
-router.put("/:id", c.updateProfile);
+router.post("/request-update", c.requestUpdateInfo);
 
 
 module.exports = router;

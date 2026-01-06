@@ -96,18 +96,20 @@ model Payment {
 }
 
 model UpdateInfo {
-  id                    Int         @id @default(autoincrement())
+  id                    Int           @id @default(autoincrement())
   fullName              String
   email                 String
   phoneNum              String
   identificationNumber  String
-  household             Household?  @relation(fields: [householdId], references: [id])
+  dateOfBirth           DateTime?
+  household             Household?    @relation(fields: [householdId], references: [id])
   householdId           Int?
-  familyRole            FamilyRole  @default(MEMBER)
-  status                Status      @default(PERMANENT)
-  user                  User?       @relation(fields: [userId], references: [id])
+  familyRole            FamilyRole    @default(MEMBER)
+  status                Status        @default(PERMANENT)
+  user                  User?         @relation(fields: [userId], references: [id])
   userId                Int?  
-  changeAt              DateTime    @default(now())
+  changeAt              DateTime      @default(now())
+  requestStatus         RequestStatus @default(PENDING)
 }
 
 //Can xem lai
@@ -160,4 +162,10 @@ enum Method {
 enum FamilyRole {
   OWNER
   MEMBER
+}
+
+enum RequestStatus{
+  PENDING
+  APPROVED
+  REJECTED
 }
