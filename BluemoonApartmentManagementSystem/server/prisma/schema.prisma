@@ -101,6 +101,7 @@ model UpdateInfo {
   email                 String
   phoneNum              String
   identificationNumber  String
+  dateOfBirth           DateTime?
   household             Household?    @relation(fields: [householdId], references: [id])
   householdId           Int?
   familyRole            FamilyRole    @default(MEMBER)

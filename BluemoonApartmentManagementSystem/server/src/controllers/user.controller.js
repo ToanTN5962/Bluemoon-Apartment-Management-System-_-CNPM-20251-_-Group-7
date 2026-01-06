@@ -12,13 +12,13 @@ exports.getById = async (req, res) => {
 
 // POST api/users/request-update
 exports.requestUpdateInfo = async (req, res) => {
-  const {userId, fullName, email, phoneNum, identificationNumber, householdId, roomNumber, dateOfBirth} = req.body;
+  const {userId, fullName, email, phoneNum, identificationNumber /*, householdId, roomNumber */, dateOfBirth} = req.body;
 
   const missingFields = [];
   if (!fullName) missingFields.push("fullName");
   if (!email) missingFields.push("email");
   if (!identificationNumber) missingFields.push("identificationNumber");
-  if (!roomNumber) missingFields.push("roomNumber");
+  // if (!roomNumber) missingFields.push("roomNumber");
   if (!dateOfBirth) missingFields.push("dateOfBirth");
 
   if (missingFields.length > 0) {
@@ -37,14 +37,16 @@ exports.requestUpdateInfo = async (req, res) => {
   try {
     const newRequest = await prisma.updateInfo.create({
       data: { 
-        userId: parseInt(userId),
+        user: {
+          connect: { id: parseInt(userId) }
+        },
         fullName: fullName,
         email: email,
-        phoneNum: phoneNum,
+        phoneNum: phoneNum || "",
         identificationNumber: identificationNumber,
-        householdId: parseInt(householdId),
-        roomNumber: roomNumber,
-        dateOfBirth: birthDateObj
+        // householdId: parseInt(householdId),
+        // roomNumber: roomNumber,
+        dateOfBirth: birthDateObj,
         requestStatus: "PENDING"
       }
     });
@@ -58,6 +60,12 @@ exports.requestUpdateInfo = async (req, res) => {
     if (err.code === 'P2003') { // Foreign key constraint failed
       return res.status(404).json({
         message: "User or household not found."
+      });
+    }
+    
+    if (err.code === 'P2025') {
+       return res.status(404).json({
+        message: "User account not found to link request."
       });
     }
     res.status(500).json({

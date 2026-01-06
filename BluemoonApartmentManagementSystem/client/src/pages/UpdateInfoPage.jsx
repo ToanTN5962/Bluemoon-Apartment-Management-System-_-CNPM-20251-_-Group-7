@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import backgroundImage from '../assets/images/updateInfo-bg.jpg';
-import { household, user } from '../../../server/src/prisma/client';
-
 export default function UpdateInfoPage() {
   const navigate = useNavigate();
 
@@ -11,9 +9,9 @@ export default function UpdateInfoPage() {
     fullName: '',
     email: '',
     phoneNum: '',
-    identityNumber: '',
-    roomNumber: '',
-    householdId: '',
+    identificationNumber: '',
+    //roomNumber: '',
+    //householdId: '',
     dateOfBirth: '',
     familyRole: 'OWNER',
     status: 'PERMANENT'
@@ -58,30 +56,30 @@ export default function UpdateInfoPage() {
     if (!formData.dateOfBirth) {
       return alert ('Please enter your date of birth');
     }
-    if (!formData.identityNumber.trim()) {
-      return alert('Please enter your identity number');
+    if (!formData.identificationNumber.trim()) {
+      return alert('Please enter your identification number');
     }
-    if (!formData.roomNumber.trim()) {
-      return alert('Please enter your room number');
-    }
+    //if (!formData.roomNumber.trim()) {
+    //  return alert('Please enter your room number');
+    //}
 
     setLoading(true);
 
     const payload = {
-      userID: parseInt(formData.userId),
+      userId: parseInt(formData.userId),
       fullName: formData.fullName,
       email: formData.email,
       phoneNum: formData.phoneNum,
-      identificationNumber: formData.identityNumber,
-      roomNumber: formData.roomNumber,
-      householdId: parseInt(formData.householdId),
+      identificationNumber: formData.identificationNumber,
+      //roomNumber: formData.roomNumber,
+      //householdId: parseInt(formData.householdId),
       dateOfBirth: formData.dateOfBirth,
       familyRole: formData.familyRole,
       status: formData.status
     };
 
     try {
-      const response = await fetch('http://localhost:3000/api/user/request-update', {
+      const response = await fetch('http://localhost:3000/api/users/request-update', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData)
@@ -360,8 +358,8 @@ export default function UpdateInfoPage() {
               />
             </div>
 
-            
-            {/* Room Number */}
+            {/* 
+            { Room Number }
             <div style={{
               display: 'flex',
               alignItems: 'center',
@@ -395,7 +393,7 @@ export default function UpdateInfoPage() {
                 }}
               />
             </div>
-
+            */}
             {/* Family Role */}
             <div style={{
               display: 'flex',
@@ -430,8 +428,8 @@ export default function UpdateInfoPage() {
                   cursor: 'pointer'
                 }}
               >
-                <option value="owner">Owner</option>
-                <option value="member">Member</option>
+                <option value="OWNER">Owner</option>
+                <option value="MEMBER">Member</option>
               </select>
             </div>
 
@@ -469,8 +467,8 @@ export default function UpdateInfoPage() {
                   cursor: 'pointer'
                 }}
               >
-                <option value="owner">Permanent</option>
-                <option value="member">Temporary</option>
+                <option value="PERMANENT">Permanent</option>
+                <option value="TEMPORARY">Temporary</option>
               </select>
             </div>
 
