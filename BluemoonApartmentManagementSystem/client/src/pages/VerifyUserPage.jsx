@@ -66,7 +66,7 @@ function VerifyUserPage() {
 
   const handleLogout = () => {
     localStorage.removeItem('user');
-    navigate('/login');
+    navigate('/');
   };
 
   // Nếu bạn có import backgroundImage, dùng biến đó. Nếu không, dùng URL stock tương tự hình bạn upload
