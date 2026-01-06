@@ -216,7 +216,7 @@ function AdminPage() {
           </button>
 
           <button
-            onClick={() => navigate('/admin/create-fee')}
+            onClick={() => navigate('/admin/fee')}
             style={{
               padding: '20px 40px',
               fontSize: '24px',
@@ -239,7 +239,7 @@ function AdminPage() {
               e.currentTarget.style.boxShadow = '0 8px 20px rgba(76, 124, 255, 0.3)';
             }}
           >
-            Create Fee
+            Fee
           </button>
 
           <button

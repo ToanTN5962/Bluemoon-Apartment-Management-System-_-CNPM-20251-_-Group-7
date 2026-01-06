@@ -11,6 +11,7 @@ import UpdateInfoPage from './pages/UpdateInfoPage';
 import AdminPage from './pages/AdminPage';
 import AccountPage from './pages/AccountPage';
 import VerifyUserPage from './pages/VerifyUserPage';
+import FeePage from './pages/FeePage';
 
 function App() {
   return (
@@ -28,6 +29,7 @@ function App() {
         <Route path="/update-info" element={<UpdateInfoPage/>}/>
         <Route path="/account" element={<AccountPage/>}/>
         <Route path="/admin/verified-user" element={<VerifyUserPage/>}/>
+        <Route path="/admin/fee" element={<FeePage/>}/>
       </Routes>
     </Router>
   );
