@@ -41,7 +41,7 @@ export default function CreateFeePage() {
         setIsSubmitting(false);
         navigate('/admin/fee'); // Quay về trang danh sách
       }, 800);
-    } else {  //----------------- đoạn này để fetch api, endpoint
+    } else {
       try {
         const response = await fetch(API_URL, {
           method: 'POST',
@@ -55,16 +55,12 @@ export default function CreateFeePage() {
           })
         });
 
-        if (response.ok) {
-          console.log('Dữ liệu đã gửi thành công:', formData);
-          alert('Tạo khoản thu thành công!');
-          navigate('/admin/fee'); // Quay về trang danh sách
-        } else {
-          alert('Tạo khoản thu thất bại!');
-        }
-      } catch (error) {
-        console.error('Lỗi:', error);
-        alert('Lỗi kết nối khi tạo khoản thu!');
+        if (!response.ok) throw new Error();
+
+        alert('Tạo khoản thu thành công!');
+        navigate('/admin/fee');
+      } catch (err) {
+        alert('Không thể tạo khoản thu!');
       } finally {
         setIsSubmitting(false);
       }
@@ -211,7 +207,7 @@ export default function CreateFeePage() {
 
         <div>
           <div className="form-row">
-            <div className="form-label">name</div>
+            <div className="form-label">Name</div>
             <input
               type="text"
               name="name"

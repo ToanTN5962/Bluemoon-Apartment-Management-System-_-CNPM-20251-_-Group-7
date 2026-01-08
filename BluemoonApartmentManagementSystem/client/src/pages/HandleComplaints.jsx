@@ -9,6 +9,7 @@ function HandleComplaints() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // Check auth
     const storedUser = localStorage.getItem('user');
     if (!storedUser) {
       navigate('/login');
@@ -16,7 +17,8 @@ function HandleComplaints() {
     }
     setCurrentAdmin(JSON.parse(storedUser));
 
-    fetch('https://your-backend.com/api/complaints')
+    // Fetch complaints (thay URL backend thực tế)
+    fetch('http://localhost:3001/complaints')
       .then(res => res.json())
       .then(data => {
         setComplaints(data);
@@ -24,26 +26,7 @@ function HandleComplaints() {
       })
       .catch(err => {
         console.error('Fetch complaints error:', err);
-        // Fallback data giống hình bạn gửi
-        setComplaints([
-          {
-            id: 1,
-            title: 'Phòng 303 quá ồn ào trong khung giờ nghỉ ngơi hằng ngày',
-            content: '',
-          },
-          {
-            id: 2,
-            title: '',
-            content:
-              'Hôm trước tôi đi làm về. Thấy ở trước khu toà nhà có một người đi vệ sinh bên sát đường đi, khiến cho xung quanh đây bốc mùi mà bác bảo vệ với các bác an ninh không làm gì cả. Chỗ vui chơi của bọn trẻ con không được dọn dẹp vệ sinh thường xuyên',
-          },
-          {
-            id: 3,
-            title: '',
-            content:
-              'Nếu ở khu căn hộ này thì có được giảm giá gì khi đăng ký thẻ thành viên ở phòng gym của khu không',
-          },
-        ]);
+        
         setLoading(false);
       });
   }, [navigate]);
@@ -61,7 +44,7 @@ function HandleComplaints() {
 
   /* ================== STYLES ================== */
 
- const backgroundStyle = {
+  const backgroundStyle = {
     minHeight: '100vh',
     backgroundImage: `url(${backgroundImage})`,
     backgroundSize: 'cover',

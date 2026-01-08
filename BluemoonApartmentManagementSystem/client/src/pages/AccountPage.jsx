@@ -8,80 +8,44 @@ const API_URL = 'https://your-backend-api.com/api/account';
 
 export default function AccountPage() {
   const navigate = useNavigate();
-  const [formData, setFormData] = useState({
-    fullName: '',
-    email: '',
-    phoneNumber1: '',
-    identityNumber: '',
-    phoneNumber2: '',
-    roomNumber: '',
-    dateOfBirth: '',
-    familyRole: '',
-    status: ''
-  });
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
 
-  // Fetch dữ liệu từ backend khi component mount
+  const [formData, setFormData] = useState('');
+
+  // Dữ liệu mẫu hiển thị cố định. Trong tương lai nếu fetch với backend thì sẽ thay đổi đoạn này
+  //const [formData] = useState({
+  //   fullName: 'Nguyễn Văn A',
+  //   email: 'nguyenvana@example.com',
+  //   phoneNumber1: '0901234567',
+  //   identityNumber: '123456789',
+  //   phoneNumber2: '0907654321',
+  //   roomNumber: 'A-1205',
+  //   dateOfBirth: '1995-05-20',
+  //   familyRole: 'owner',
+  //   status: 'permanent'
+  // });
+
   useEffect(() => {
-    const fetchAccountData = async () => {
-      if (USE_MOCK) {
-        // Giả lập thời gian chờ của server
-        setTimeout(() => {
-          setFormData({
-            fullName: 'Nguyễn Văn A',
-            email: 'nguyenvana@example.com',
-            phoneNumber1: '0901234567',
-            identityNumber: '123456789',
-            phoneNumber2: '0907654321',
-            roomNumber: 'A-1205',
-            dateOfBirth: '1995-05-20',
-            familyRole: 'owner',
-            status: 'permanent'
-          });
-          setLoading(false);
-        }, 800);
-      } else {
-        try {
-          // Lấy user_id từ localStorage hoặc context (tùy cách bạn quản lý auth)
-          const userId = localStorage.getItem('userId');
-          
-          const response = await fetch(`${API_URL}/${userId}`, {
-            method: 'GET',
-            headers: {
-              'Content-Type': 'application/json',
-              // Thêm token nếu cần authentication
-              // 'Authorization': `Bearer ${localStorage.getItem('token')}`
-            }
-          });
-
-          if (!response.ok) {
-            throw new Error('Không thể tải thông tin tài khoản');
-          }
-
-          const data = await response.json();
-          setFormData({
-            fullName: data.full_name || '',
-            email: data.email || '',
-            phoneNumber1: data.phone_number_1 || '',
-            identityNumber: data.identity_number || '',
-            phoneNumber2: data.phone_number_2 || '',
-            roomNumber: data.room_number || '',
-            dateOfBirth: data.date_of_birth || '',
-            familyRole: data.family_role || '',
-            status: data.status || ''
-          });
-        } catch (err) {
-          console.error('Fetch error:', err);
-          setError('Không thể tải thông tin tài khoản. Vui lòng thử lại sau.');
-        } finally {
-          setLoading(false);
-        }
-      }
+    const getInfo = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        const response = await fetch('http://localhost:3000/api/auth/getinfo', {
+          method: 'GET',
+          headers: {'Authorization': `Bearer ${token}`}
+        });
+        const data = await response.json;
+        setFormData(data);
+      } catch(err) {
+        console.log("Error fetching user info: ", err);
+      };
     };
 
-    fetchAccountData();
+    getInfo();
   }, []);
+
+  if (!formData) {
+    return <p style={{ color: 'white' }}>Loading...</p>;
+  }
+
 
   // Style chung cho các ô chỉ xem (Read-only)
   const readOnlyInputStyle = {

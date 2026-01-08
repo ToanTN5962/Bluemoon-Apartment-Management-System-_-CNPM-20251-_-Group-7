@@ -193,7 +193,7 @@ const FeePage = () => {
                     <span>{fee.name}</span>
                   </div>
                   <div className="detail-item">
-                    <label>Chu kỳ</label>
+                    <label>Cycle</label>
                     <span>{fee.cycle}</span>
                   </div>
                   <div className="detail-item">

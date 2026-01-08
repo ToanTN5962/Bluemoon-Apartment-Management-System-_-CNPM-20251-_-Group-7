@@ -14,7 +14,9 @@ import VerifyUserPage from './pages/VerifyUserPage';
 import FeePage from './pages/FeePage';
 import CreateFeePage from './pages/CreateFeePage';
 import HandleComplaints from './pages/HandleComplaints';
-
+import SendFeedback from './pages/SendFeedback'
+import CheckFee from './pages/CheckFee';
+import UpdateFeePage from './pages/UpdateFeePage';
 
 function App() {
   return (
@@ -34,8 +36,10 @@ function App() {
         <Route path="/admin/verified-user" element={<VerifyUserPage/>}/>
         <Route path="/admin/fee" element={<FeePage/>}/>
         <Route path="/admin/create-fee" element={<CreateFeePage/>}/>
-        <Route path="/admin/complaints" element={<HandleComplaints />} />
-
+        <Route path="/admin/complaints" element={<HandleComplaints />} />     
+        <Route path="/send-feedback" element={<SendFeedback />} />
+        <Route path="/check-fees" element={<CheckFee />} />
+        <Route path="/admin/update-fee" element={<UpdateFeePage/>} />
       </Routes>
     </Router>
   );

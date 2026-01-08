@@ -1,0 +1,17 @@
+-- AlterTable
+ALTER TABLE `updateinfo` ADD COLUMN `dateOfBirth` DATETIME(3) NULL,
+    ADD COLUMN `requestStatus` ENUM('PENDING', 'APPROVED', 'REJECTED') NOT NULL DEFAULT 'PENDING';
+
+-- CreateTable
+CREATE TABLE `Complaint` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `userId` INTEGER NOT NULL,
+    `content` VARCHAR(191) NOT NULL,
+    `complaintStatus` ENUM('SOLVED', 'UNSOLVED') NOT NULL DEFAULT 'UNSOLVED',
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- AddForeignKey
+ALTER TABLE `Complaint` ADD CONSTRAINT `Complaint_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
