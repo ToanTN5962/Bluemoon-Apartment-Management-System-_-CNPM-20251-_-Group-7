@@ -53,6 +53,7 @@ function LoginPage() {
         }
       } else {
         console.log('Login successful:', data);
+        localStorage.setItem('token', data.token);
         localStorage.setItem('user', JSON.stringify(data));
         // Chuyển hướng sau khi đăng nhập thành công
         if(data.user.role === 'ADMIN'){

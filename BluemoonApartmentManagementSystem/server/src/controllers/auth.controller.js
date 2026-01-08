@@ -1,4 +1,6 @@
+const e = require("express");
 const prisma = require("../prisma/client");
+const jwt = require("jsonwebtoken");
 
 /**
  * POST /api/auth/signup
@@ -67,9 +69,12 @@ const login = async (req, res) => {
       });
     }
 
+    const token = jwt.sign({userId: user.id, email: user.email, role: user.role}, process.env.JWT_SECRET, { expiresIn: "1h" });
+
     return res.json({
       message: "Login success",
-      user
+      user,
+      token
     });
   } catch (error) {
     console.error("Login error:", error);
@@ -79,7 +84,17 @@ const login = async (req, res) => {
   }
 };
 
+const getinfo = async (req, res) => {
+  try{
+    const user = await prisma.user.findUnique({where: {id: req.userId}});
+    return res.json(user);
+  } catch(err){
+    return res.status(500).json({error: err.message});
+  };
+};
+
 module.exports = {
   signup,
-  login
+  login,
+  getinfo
 };
