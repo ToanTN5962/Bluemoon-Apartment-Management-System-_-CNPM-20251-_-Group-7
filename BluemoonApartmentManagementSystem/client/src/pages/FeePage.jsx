@@ -3,8 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import backgroundImage from '../assets/images/afterLogin-bg.jpg';
 
 // === CẤU HÌNH HỆ THỐNG ===
-const USE_MOCK = true; // Chuyển thành false khi có API thật
-const API_URL = 'https://your-backend-api.com/api/fees';
+const USE_MOCK = false; // Chuyển thành false khi có API thật
+const API_URL = 'http://localhost:3000/api/fees';
 
 const FeePage = () => {
   const [fees, setFees] = useState([]);
@@ -31,7 +31,7 @@ const FeePage = () => {
         }, 800);
       } else {
         try {
-          const response = await fetch(API_URL);
+          const response = await fetch(`${API_URL}/showfees`);
           if (!response.ok) throw new Error('Lỗi server');
           const data = await response.json();
           setFees(data);
@@ -189,12 +189,12 @@ const FeePage = () => {
               <div key={fee.id} className="fee-card" onClick={() => navigate('/admin/check-fee', { state: { fee } })}>
                 <div className="fee-details">
                   <div className="detail-item">
-                    <label>Mã hóa đơn</label>
-                    <span>{fee.bill_id}</span>
+                    <label>Tên hóa đơn</label>
+                    <span>{fee.name}</span>
                   </div>
                   <div className="detail-item">
-                    <label>Ngày thanh toán</label>
-                    <span>{new Date(fee.paid_at).toLocaleDateString('vi-VN')}</span>
+                    <label>Chu kỳ</label>
+                    <span>{fee.cycle}</span>
                   </div>
                   <div className="detail-item">
                     <label>Số tiền</label>

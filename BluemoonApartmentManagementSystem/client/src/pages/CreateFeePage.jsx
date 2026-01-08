@@ -3,16 +3,15 @@ import { useNavigate } from 'react-router-dom';
 import backgroundImage from '../assets/images/afterLogin-bg.jpg';
 
 // === CẤU HÌNH HỆ THỐNG ===
-const USE_MOCK = true; // Chuyển thành false khi có API thật
-const API_URL = 'https://your-backend-api.com/api/fees';
+const USE_MOCK = false; // Chuyển thành false khi có API thật
+const API_URL = 'http://localhost:3000/api/fees';
 
 export default function CreateFeePage() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    billId: '',
-    paidAt: '',
+    name: '',
     amount: '',
-    method: ''
+    cycle: ''
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -27,7 +26,7 @@ export default function CreateFeePage() {
 
   const handleSubmit = async () => {
     // Validate form
-    if (!formData.billId || !formData.paidAt || !formData.amount || !formData.method) {
+    if (!formData.name || !formData.cycle || !formData.amount) {
       alert('Vui lòng điền đầy đủ thông tin!');
       return;
     }
@@ -50,10 +49,9 @@ export default function CreateFeePage() {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            bill_id: formData.billId,
-            paid_at: formData.paidAt,
-            amount: parseFloat(formData.amount),
-            method: formData.method
+            name: formData.name,
+            cycle: formData.cycle,
+            amount: parseInt(formData.amount)
           })
         });
 
@@ -213,25 +211,26 @@ export default function CreateFeePage() {
 
         <div>
           <div className="form-row">
-            <div className="form-label">Bill ID</div>
+            <div className="form-label">name</div>
             <input
               type="text"
-              name="billId"
-              value={formData.billId}
+              name="name"
+              value={formData.name}
               onChange={handleChange}
               className="form-input"
-              placeholder="Nhập mã hóa đơn"
+              placeholder="Nhập tên khoản thu"
             />
           </div>
 
           <div className="form-row">
-            <div className="form-label">Paid at</div>
+            <div className="form-label">Cycle</div>
             <input
-              type="datetime-local"
-              name="paidAt"
-              value={formData.paidAt}
+              type="text"
+              name="cycle"
+              value={formData.cycle}
               onChange={handleChange}
               className="form-input"
+              placeholder="DAILY"
             />
           </div>
 
@@ -244,18 +243,6 @@ export default function CreateFeePage() {
               onChange={handleChange}
               className="form-input"
               placeholder="Nhập số tiền (VND)"
-            />
-          </div>
-
-          <div className="form-row">
-            <div className="form-label">Method</div>
-            <input
-              type="text"
-              name="method"
-              value={formData.method}
-              onChange={handleChange}
-              className="form-input"
-              placeholder="Chuyển khoản/Tiền mặt"
             />
           </div>
 
