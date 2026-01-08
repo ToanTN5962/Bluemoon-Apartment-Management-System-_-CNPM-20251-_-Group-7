@@ -14,6 +14,8 @@ import VerifyUserPage from './pages/VerifyUserPage';
 import FeePage from './pages/FeePage';
 import CreateFeePage from './pages/CreateFeePage';
 import HandleComplaints from './pages/HandleComplaints';
+import UpdateFeePage from './pages/UpdateFeePage';
+import AfterFeePage from './pages/AfterFeePage';
 
 
 function App() {
@@ -35,7 +37,8 @@ function App() {
         <Route path="/admin/fee" element={<FeePage/>}/>
         <Route path="/admin/create-fee" element={<CreateFeePage/>}/>
         <Route path="/admin/complaints" element={<HandleComplaints />} />
-
+        <Route path="/admin/update-fee" element={<UpdateFeePage/>}/>
+        <Route path="/admin/check-fee" element={<AfterFeePage/>}/>
       </Routes>
     </Router>
   );
