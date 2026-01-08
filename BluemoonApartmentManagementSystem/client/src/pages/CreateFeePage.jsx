@@ -4,7 +4,7 @@ import backgroundImage from '../assets/images/afterLogin-bg.jpg';
 
 // === CẤU HÌNH HỆ THỐNG ===
 const USE_MOCK = true; // Chuyển thành false khi có API thật
-const API_URL = 'https://your-backend-api.com/api/fees';
+const API_URL = 'http://localhost:3001/fees';
 
 export default function CreateFeePage() {
   const navigate = useNavigate();
@@ -25,53 +25,39 @@ export default function CreateFeePage() {
     }));
   };
 
-  const handleSubmit = async () => {
-    // Validate form
-    if (!formData.billId || !formData.paidAt || !formData.amount || !formData.method) {
-      alert('Vui lòng điền đầy đủ thông tin!');
-      return;
-    }
+    const handleSubmit = async () => {
+  if (!formData.billId || !formData.paidAt || !formData.amount || !formData.method) {
+    alert('Vui lòng điền đầy đủ thông tin!');
+    return;
+  }
 
-    setIsSubmitting(true);
+  setIsSubmitting(true);
 
-    if (USE_MOCK) {
-      // Giả lập thời gian chờ của server
-      setTimeout(() => {
-        console.log('Dữ liệu đã gửi thành công (Mock):', formData);
-        alert('Tạo khoản thu thành công!');
-        setIsSubmitting(false);
-        navigate('/admin/fee'); // Quay về trang danh sách
-      }, 800);
-    } else {  //----------------- đoạn này để fetch api, endpoint
-      try {
-        const response = await fetch(API_URL, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            bill_id: formData.billId,
-            paid_at: formData.paidAt,
-            amount: parseFloat(formData.amount),
-            method: formData.method
-          })
-        });
+  try {
+    const response = await fetch('http://localhost:3001/fees', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+  bill_id: formData.billId,
+  paid_at: new Date(formData.paidAt).toISOString(),
+  amount: Number(formData.amount),
+  method: formData.method
+})
+    });
+    
 
-        if (response.ok) {
-          console.log('Dữ liệu đã gửi thành công:', formData);
-          alert('Tạo khoản thu thành công!');
-          navigate('/admin/fee'); // Quay về trang danh sách
-        } else {
-          alert('Tạo khoản thu thất bại!');
-        }
-      } catch (error) {
-        console.error('Lỗi:', error);
-        alert('Lỗi kết nối khi tạo khoản thu!');
-      } finally {
-        setIsSubmitting(false);
-      }
-    }
-  };
+    if (!response.ok) throw new Error();
+
+    alert('Tạo khoản thu thành công!');
+    navigate('/admin/fee');
+  } catch (err) {
+    alert('Không thể tạo khoản thu!');
+  } finally {
+    setIsSubmitting(false);
+  }
+};
 
   const handleCancel = () => {
     navigate('/admin/fee'); // Quay về trang danh sách
