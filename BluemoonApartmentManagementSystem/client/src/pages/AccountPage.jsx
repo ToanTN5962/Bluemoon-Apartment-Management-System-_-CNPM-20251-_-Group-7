@@ -2,21 +2,86 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import backgroundImage from '../assets/images/updateInfo-bg.jpg';
 
+// === CẤU HÌNH HỆ THỐNG ===
+const USE_MOCK = true; // Chuyển thành false khi có API thật
+const API_URL = 'https://your-backend-api.com/api/account';
+
 export default function AccountPage() {
   const navigate = useNavigate();
-
-  // Dữ liệu mẫu hiển thị cố định. Trong tương lai nếu fetch với backend thì sẽ thay đổi đoạn này
-  const [formData] = useState({
-    fullName: 'Nguyễn Văn A',
-    email: 'nguyenvana@example.com',
-    phoneNumber1: '0901234567',
-    identityNumber: '123456789',
-    phoneNumber2: '0907654321',
-    roomNumber: 'A-1205',
-    dateOfBirth: '1995-05-20',
-    familyRole: 'owner',
-    status: 'permanent'
+  const [formData, setFormData] = useState({
+    fullName: '',
+    email: '',
+    phoneNumber1: '',
+    identityNumber: '',
+    phoneNumber2: '',
+    roomNumber: '',
+    dateOfBirth: '',
+    familyRole: '',
+    status: ''
   });
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  // Fetch dữ liệu từ backend khi component mount
+  useEffect(() => {
+    const fetchAccountData = async () => {
+      if (USE_MOCK) {
+        // Giả lập thời gian chờ của server
+        setTimeout(() => {
+          setFormData({
+            fullName: 'Nguyễn Văn A',
+            email: 'nguyenvana@example.com',
+            phoneNumber1: '0901234567',
+            identityNumber: '123456789',
+            phoneNumber2: '0907654321',
+            roomNumber: 'A-1205',
+            dateOfBirth: '1995-05-20',
+            familyRole: 'owner',
+            status: 'permanent'
+          });
+          setLoading(false);
+        }, 800);
+      } else {
+        try {
+          // Lấy user_id từ localStorage hoặc context (tùy cách bạn quản lý auth)
+          const userId = localStorage.getItem('userId');
+          
+          const response = await fetch(`${API_URL}/${userId}`, {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+              // Thêm token nếu cần authentication
+              // 'Authorization': `Bearer ${localStorage.getItem('token')}`
+            }
+          });
+
+          if (!response.ok) {
+            throw new Error('Không thể tải thông tin tài khoản');
+          }
+
+          const data = await response.json();
+          setFormData({
+            fullName: data.full_name || '',
+            email: data.email || '',
+            phoneNumber1: data.phone_number_1 || '',
+            identityNumber: data.identity_number || '',
+            phoneNumber2: data.phone_number_2 || '',
+            roomNumber: data.room_number || '',
+            dateOfBirth: data.date_of_birth || '',
+            familyRole: data.family_role || '',
+            status: data.status || ''
+          });
+        } catch (err) {
+          console.error('Fetch error:', err);
+          setError('Không thể tải thông tin tài khoản. Vui lòng thử lại sau.');
+        } finally {
+          setLoading(false);
+        }
+      }
+    };
+
+    fetchAccountData();
+  }, []);
 
   // Style chung cho các ô chỉ xem (Read-only)
   const readOnlyInputStyle = {
@@ -25,13 +90,100 @@ export default function AccountPage() {
     fontSize: '16px',
     border: '2px solid rgba(255, 255, 255, 0.3)',
     borderRadius: '12px',
-    backgroundColor: 'rgba(255, 255, 255, 0.2)', // Làm mờ nhẹ nền để báo hiệu không thể sửa
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
     outline: 'none',
     color: '#1e3a8a',
     fontWeight: '300',
     backdropFilter: 'blur(5px)',
-    cursor: 'not-allowed' // Đổi con trỏ chuột thành biểu tượng cấm
+    cursor: 'not-allowed'
   };
+
+  const labelStyle = {
+    width: '180px',
+    fontSize: '18px',
+    fontWeight: '600',
+    color: '#1e3a8a',
+    textAlign: 'left'
+  };
+
+  // Hiển thị loading
+  if (loading) {
+    return (
+      <div style={{ 
+        minHeight: '100vh', 
+        display: 'flex', 
+        alignItems: 'center', 
+        justifyContent: 'center', 
+        background: 'linear-gradient(135deg, #1e3a8a 0%, #283664ff 50%, #162441ff 100%)' 
+      }}>
+        <div style={{ 
+          textAlign: 'center', 
+          color: 'white', 
+          fontSize: '24px', 
+          fontWeight: '600' 
+        }}>
+          <div style={{ marginBottom: '20px' }}>Đang tải thông tin...</div>
+          <div style={{ 
+            width: '50px', 
+            height: '50px', 
+            border: '5px solid rgba(255,255,255,0.3)', 
+            borderTop: '5px solid white', 
+            borderRadius: '50%', 
+            animation: 'spin 1s linear infinite',
+            margin: '0 auto'
+          }}></div>
+        </div>
+        <style>{`
+          @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+          }
+        `}</style>
+      </div>
+    );
+  }
+
+  // Hiển thị lỗi
+  if (error) {
+    return (
+      <div style={{ 
+        minHeight: '100vh', 
+        display: 'flex', 
+        alignItems: 'center', 
+        justifyContent: 'center', 
+        background: 'linear-gradient(135deg, #1e3a8a 0%, #283664ff 50%, #162441ff 100%)' 
+      }}>
+        <div style={{ 
+          textAlign: 'center', 
+          color: 'white', 
+          maxWidth: '500px',
+          padding: '40px',
+          backgroundColor: 'rgba(220, 38, 38, 0.2)',
+          borderRadius: '20px',
+          border: '2px solid rgba(220, 38, 38, 0.5)'
+        }}>
+          <div style={{ fontSize: '48px', marginBottom: '20px' }}>⚠️</div>
+          <div style={{ fontSize: '24px', fontWeight: '600', marginBottom: '15px' }}>{error}</div>
+          <button 
+            onClick={() => window.location.reload()}
+            style={{
+              padding: '12px 40px',
+              fontSize: '16px',
+              fontWeight: '600',
+              color: 'white',
+              backgroundColor: '#4c7cff',
+              border: 'none',
+              borderRadius: '10px',
+              cursor: 'pointer',
+              marginTop: '20px'
+            }}
+          >
+            Thử lại
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px', background: 'linear-gradient(135deg, #1e3a8a 0%, #283664ff 50%, #162441ff 100%)' }}>
@@ -79,7 +231,7 @@ export default function AccountPage() {
               <input type="text" value={formData.roomNumber} readOnly style={readOnlyInputStyle} />
             </div>
 
-            {/* Role & Status (Chuyển sang input text để hiển thị đẹp hơn select khi read-only) */}
+            {/* Role & Status */}
             <div style={{ display: 'flex', alignItems: 'center', gap: '30px' }}>
               <label style={labelStyle}>Family Role</label>
               <input type="text" value={formData.familyRole.toUpperCase()} readOnly style={readOnlyInputStyle} />
@@ -90,7 +242,7 @@ export default function AccountPage() {
               <input type="text" value={formData.status.toUpperCase()} readOnly style={readOnlyInputStyle} />
             </div>
 
-            {/* Nút quay lại thay vì nút Submit */}
+            {/* Nút quay lại */}
             <div style={{ display: 'flex', justifyContent: 'center', marginTop: '30px' }}>
               <button 
                 onClick={() => navigate(-1)}
@@ -102,8 +254,11 @@ export default function AccountPage() {
                   backgroundColor: '#4c7cff',
                   border: 'none',
                   borderRadius: '12px',
-                  cursor: 'pointer'
+                  cursor: 'pointer',
+                  transition: 'all 0.3s'
                 }}
+                onMouseOver={(e) => e.target.style.backgroundColor = '#3d5fd1'}
+                onMouseOut={(e) => e.target.style.backgroundColor = '#4c7cff'}
               >
                 Back to dashboard
               </button>
@@ -115,11 +270,3 @@ export default function AccountPage() {
     </div>
   );
 }
-
-const labelStyle = {
-  width: '180px',
-  fontSize: '18px',
-  fontWeight: '600',
-  color: '#1e3a8a',
-  textAlign: 'left'
-};
