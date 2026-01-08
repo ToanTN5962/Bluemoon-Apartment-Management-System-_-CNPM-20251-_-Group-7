@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import backgroundImage from '../assets/images/afterLogin-bg.jpg';
 
 // === CẤU HÌNH HỆ THỐNG ===
-const USE_MOCK = true; // Chuyển thành false khi có API thật
+const USE_MOCK = true; 
 const API_URL = 'http://localhost:3001/fees';
 
 export default function CreateFeePage() {
