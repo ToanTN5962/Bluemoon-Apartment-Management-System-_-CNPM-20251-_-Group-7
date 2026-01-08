@@ -2,75 +2,57 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import backgroundImage from '../assets/images/updateInfo-bg.jpg';
 
-// === CẤU HÌNH HỆ THỐNG ===
-const USE_MOCK = true; // Chuyển thành false khi có API thật
-const API_URL = 'https://your-backend-api.com/api/account';
-
 export default function AccountPage() {
   const navigate = useNavigate();
 
-  const [formData, setFormData] = useState('');
-
-  // Dữ liệu mẫu hiển thị cố định. Trong tương lai nếu fetch với backend thì sẽ thay đổi đoạn này
-  //const [formData] = useState({
-  //   fullName: 'Nguyễn Văn A',
-  //   email: 'nguyenvana@example.com',
-  //   phoneNumber1: '0901234567',
-  //   identityNumber: '123456789',
-  //   phoneNumber2: '0907654321',
-  //   roomNumber: 'A-1205',
-  //   dateOfBirth: '1995-05-20',
-  //   familyRole: 'owner',
-  //   status: 'permanent'
-  // });
+  const [formData, setFormData] = useState(null);
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(true); 
 
   useEffect(() => {
     const getInfo = async () => {
       try {
+        setLoading(true); 
         const token = localStorage.getItem('token');
+        
+        if (!token) {
+          setError('No token found. Please login again.');
+          setLoading(false);
+          return;
+        }
+
+        console.log('Sending request with token:', token);
+        
         const response = await fetch('http://localhost:3000/api/auth/getinfo', {
           method: 'GET',
-          headers: {'Authorization': `Bearer ${token}`}
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
         });
-        const data = await response.json;
+
+        console.log('Response status:', response.status); 
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        console.log('Received data:', data); 
+        
         setFormData(data);
+        setError('');
       } catch(err) {
-        console.log("Error fetching user info: ", err);
-      };
+        console.error("Error fetching user info:", err);
+        setError('Failed to load user information. Please try again.');
+      } finally {
+        setLoading(false); 
+      }
     };
 
     getInfo();
   }, []);
 
-  if (!formData) {
-    return <p style={{ color: 'white' }}>Loading...</p>;
-  }
-
-
-  // Style chung cho các ô chỉ xem (Read-only)
-  const readOnlyInputStyle = {
-    flex: 1,
-    padding: '18px 24px',
-    fontSize: '16px',
-    border: '2px solid rgba(255, 255, 255, 0.3)',
-    borderRadius: '12px',
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
-    outline: 'none',
-    color: '#1e3a8a',
-    fontWeight: '300',
-    backdropFilter: 'blur(5px)',
-    cursor: 'not-allowed'
-  };
-
-  const labelStyle = {
-    width: '180px',
-    fontSize: '18px',
-    fontWeight: '600',
-    color: '#1e3a8a',
-    textAlign: 'left'
-  };
-
-  // Hiển thị loading
   if (loading) {
     return (
       <div style={{ 
@@ -107,7 +89,6 @@ export default function AccountPage() {
     );
   }
 
-  // Hiển thị lỗi
   if (error) {
     return (
       <div style={{ 
@@ -149,6 +130,32 @@ export default function AccountPage() {
     );
   }
 
+  if (!formData) {
+    return <div style={{ color: 'white', textAlign: 'center', marginTop: '50px' }}>No data available</div>;
+  }
+
+  const readOnlyInputStyle = {
+    flex: 1,
+    padding: '18px 24px',
+    fontSize: '16px',
+    border: '2px solid rgba(255, 255, 255, 0.3)',
+    borderRadius: '12px',
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    outline: 'none',
+    color: '#1e3a8a',
+    fontWeight: '300',
+    backdropFilter: 'blur(5px)',
+    cursor: 'not-allowed'
+  };
+
+  const labelStyle = {
+    width: '180px',
+    fontSize: '18px',
+    fontWeight: '600',
+    color: '#1e3a8a',
+    textAlign: 'left'
+  };
+
   return (
     <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px', background: 'linear-gradient(135deg, #1e3a8a 0%, #283664ff 50%, #162441ff 100%)' }}>
       <div style={{ width: '100%', maxWidth: '1200px', borderRadius: '30px', overflow: 'hidden', boxShadow: '0 20px 60px rgba(0, 0, 0, 0.3)', backgroundImage: `url(${backgroundImage})`, backgroundSize: 'cover', backgroundPosition: 'center' }}>
@@ -160,53 +167,46 @@ export default function AccountPage() {
 
           <div style={{ maxWidth: '700px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '20px' }}>
             
-            {/* Full Name */}
             <div style={{ display: 'flex', alignItems: 'center', gap: '30px' }}>
               <label style={labelStyle}>Full Name</label>
-              <input type="text" value={formData.fullName} readOnly style={readOnlyInputStyle} />
+              <input type="text" value={formData.fullName || formData.name || ''} readOnly style={readOnlyInputStyle} />
             </div>
 
-            {/* Email */}
             <div style={{ display: 'flex', alignItems: 'center', gap: '30px' }}>
               <label style={labelStyle}>Email</label>
-              <input type="email" value={formData.email} readOnly style={readOnlyInputStyle} />
+              <input type="email" value={formData.email || ''} readOnly style={readOnlyInputStyle} />
             </div>
 
-            {/* Date of Birth */}
             <div style={{ display: 'flex', alignItems: 'center', gap: '30px' }}>
               <label style={labelStyle}>Date of Birth</label>
-              <input type="date" value={formData.dateOfBirth} readOnly style={readOnlyInputStyle} />
+              <input type="date" value={formData.dateOfBirth || ''} readOnly style={readOnlyInputStyle} />
             </div>
 
-            {/* Phone Numbers */}
             <div style={{ display: 'flex', alignItems: 'center', gap: '30px' }}>
               <label style={labelStyle}>Phone Number</label>
-              <input type="text" value={formData.phoneNumber1} readOnly style={readOnlyInputStyle} />
+              <input type="text" value={formData.phoneNumber1 || formData.phoneNum || formData.phone || ''} readOnly style={readOnlyInputStyle} />
             </div>
 
             <div style={{ display: 'flex', alignItems: 'center', gap: '30px' }}>
               <label style={labelStyle}>Identity No.</label>
-              <input type="text" value={formData.identityNumber} readOnly style={readOnlyInputStyle} />
+              <input type="text" value={formData.identityNumber || ''} readOnly style={readOnlyInputStyle} />
             </div>
 
-            {/* Room Info */}
             <div style={{ display: 'flex', alignItems: 'center', gap: '30px' }}>
               <label style={labelStyle}>Room Number</label>
-              <input type="text" value={formData.roomNumber} readOnly style={readOnlyInputStyle} />
+              <input type="text" value={formData.roomNumber || ''} readOnly style={readOnlyInputStyle} />
             </div>
 
-            {/* Role & Status */}
             <div style={{ display: 'flex', alignItems: 'center', gap: '30px' }}>
               <label style={labelStyle}>Family Role</label>
-              <input type="text" value={formData.familyRole.toUpperCase()} readOnly style={readOnlyInputStyle} />
+              <input type="text" value={formData.familyRole ? formData.familyRole.toUpperCase() : ''} readOnly style={readOnlyInputStyle} />
             </div>
 
             <div style={{ display: 'flex', alignItems: 'center', gap: '30px' }}>
               <label style={labelStyle}>Status</label>
-              <input type="text" value={formData.status.toUpperCase()} readOnly style={readOnlyInputStyle} />
+              <input type="text" value={formData.status ? formData.status.toUpperCase() : (formData.isActive ? 'ACTIVE' : 'INACTIVE')} readOnly style={readOnlyInputStyle} />
             </div>
 
-            {/* Nút quay lại */}
             <div style={{ display: 'flex', justifyContent: 'center', marginTop: '30px' }}>
               <button 
                 onClick={() => navigate(-1)}
