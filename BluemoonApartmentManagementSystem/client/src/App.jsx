@@ -12,6 +12,8 @@ import AdminPage from './pages/AdminPage';
 import AccountPage from './pages/AccountPage';
 import VerifyUserPage from './pages/VerifyUserPage';
 import FeePage from './pages/FeePage';
+import CreateFeePage from './pages/CreateFeePage';
+
 
 function App() {
   return (
@@ -30,6 +32,7 @@ function App() {
         <Route path="/account" element={<AccountPage/>}/>
         <Route path="/admin/verified-user" element={<VerifyUserPage/>}/>
         <Route path="/admin/fee" element={<FeePage/>}/>
+        <Route path="/admin/create-fee" element={<CreateFeePage/>}/>
       </Routes>
     </Router>
   );
