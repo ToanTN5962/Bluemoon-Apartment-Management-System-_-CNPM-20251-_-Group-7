@@ -13,6 +13,7 @@ import AccountPage from './pages/AccountPage';
 import VerifyUserPage from './pages/VerifyUserPage';
 import FeePage from './pages/FeePage';
 import CreateFeePage from './pages/CreateFeePage';
+import HandleComplaints from './pages/HandleComplaints';
 
 
 function App() {
@@ -33,6 +34,8 @@ function App() {
         <Route path="/admin/verified-user" element={<VerifyUserPage/>}/>
         <Route path="/admin/fee" element={<FeePage/>}/>
         <Route path="/admin/create-fee" element={<CreateFeePage/>}/>
+        <Route path="/admin/complaints" element={<HandleComplaints />} />
+
       </Routes>
     </Router>
   );
