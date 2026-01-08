@@ -7,40 +7,87 @@ function SendFeedback() {
   const [content, setContent] = useState('');
   const [submitting, setSubmitting] = useState(false);
 
-  // 🔙 Quay về trang sau login
+  // Quay về trang sau login
   const handleBack = () => {
     navigate('/after-login');
   };
 
-  // 📤 Gửi phản ánh
-  const handleSubmit = () => {
+  // Gửi phản ánh
+  const handleSubmit = async () => {
     if (!content.trim()) {
       alert('Vui lòng nhập nội dung phản ánh');
       return;
     }
 
     setSubmitting(true);
+
+    try{
+      const token = localStorage.getItem('token');
+      if (!token){
+        alert('Bạn cần đăng nhập để gửi phản ánh.');
+        navigate('/login');
+        return;
+      }
+
+      const decoded = JSON.parse(atob(token.split('.')[1]));
+      console.log('Decoded token:', decoded);
+
+      const response = await fetch('http://localhost:3000/api/complaints/createcomplaint', {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          userId: decoded.id,
+          description: content,
+        })
+      });
+
+
+      console.log('Response status:', response.status);
+
+      if (!response.ok) {
+        throw new Error('Submit failed');
+      }
+
+      const data = await response.json();
+      console.log('Response data:', data);
+
+      alert('Gửi phản ánh thành công!');
+      setContent('');
+      navigate('/after-login');
+    } catch (err){
+      console.error('Error submitting complaint:', err);
+      alert('Không thể gửi phản ánh. Vui lòng thử lại.');
+    } finally {
+      setSubmitting(false);
+    }
     
 
-    fetch('http://localhost:3001/complaints', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        content,
-        createdAt: new Date().toISOString(),
-      }),
-    })
+    // fetch('http://localhost:3000/api/complaints/createcomplaint', {
+    //   method: 'POST',
+    //   headers: { 
+    //     'Content-Type': 'application/json',
+    //     'Authorization': `Bearer ${localStorage.getItem('token')}`
+    //   },
+    //   body: JSON.stringify({
+    //     userId: JSON.parse(atob(localStorage.getItem('token').split('.')[1])).id,
+    //     description: content,
+    //     createdAt: new Date().toISOString(),
+    //   }),
+    // })
     
-      .then(res => {
-        if (!res.ok) throw new Error('Submit failed');
-        alert('Gửi phản ánh thành công!');
-        setContent('');
-        navigate('/after-login');
-      })
-      .catch(() => {
-        alert('Không thể gửi phản ánh. Vui lòng thử lại.');
-      })
-      .finally(() => setSubmitting(false));
+    //   .then(res => {
+    //     if (!res.ok) throw new Error('Submit failed');
+    //     alert('Gửi phản ánh thành công!');
+    //     setContent('');
+    //     navigate('/after-login');
+    //   })
+    //   .catch(() => {
+    //     alert('Không thể gửi phản ánh. Vui lòng thử lại.');
+    //   })
+    //   .finally(() => setSubmitting(false));
   };
 
   /* ================= STYLES ================= */
@@ -74,7 +121,7 @@ function SendFeedback() {
   const textareaStyle = {
     width: '100%',
     minHeight: '280px',
-    resize: 'vertical',      // ✅ kéo thả
+    resize: 'vertical',      // kéo thả
     padding: '18px',
     fontSize: '16px',
     borderRadius: '14px',
