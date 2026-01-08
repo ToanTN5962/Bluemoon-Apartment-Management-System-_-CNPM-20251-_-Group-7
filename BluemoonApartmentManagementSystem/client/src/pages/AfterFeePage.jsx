@@ -262,13 +262,13 @@ const AfterFeePage = () => {
 
       <div className="container">
         {/* Back Button */}
-        <button className="back-button" onClick={() => navigate('/admin/fee')}>
-          ← Back to dashboard
+        <button className="back-button" onClick={() => navigate('/admin')}>
+          Back to dashboard
         </button>
 
         {/* Fee ID Card */}
         <div className="fee-id-card">
-          <h1>Fee ID: {fee?.bill_id || 'N/A'}</h1>
+          <h1>Tên khoản thu: {fee?.name || 'N/A'}</h1>
         </div>
 
         {/* Search Box */}
