@@ -7,8 +7,6 @@ function route(app){
     app.use("/api/households", require("./household.route"));
     app.use("/api/fees", require("./fee.route"));
     app.use("/api/complaints", require("./complaint.route"));
-    // console.log("test");
-
     app.use("/api/bills", require("./bill.route"));
     //app.use("/api/payments", require("./payment.route"));
     //app.use(require("./homepage.route"));

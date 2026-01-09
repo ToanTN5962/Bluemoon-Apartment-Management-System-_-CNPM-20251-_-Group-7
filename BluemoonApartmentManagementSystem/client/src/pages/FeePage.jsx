@@ -14,33 +14,16 @@ const FeePage = () => {
   // 1. useEffect: Xử lý lấy dữ liệu khi load trang
   useEffect(() => {
     const fetchFees = async () => {
-      if (USE_MOCK) {
-        // Giả lập thời gian chờ của server
-        setTimeout(() => {
-          setFees([
-            { id: '1', bill_id: 'BILL001', paid_at: '2025-12-15', amount: 2500000 },
-            { id: '2', bill_id: 'BILL002', paid_at: '2026-01-02', amount: 1800000 },
-            { id: '3', bill_id: 'BILL003', paid_at: '2026-01-05', amount: 3200000 },
-            { id: '4', bill_id: 'BILL004', paid_at: '2025-11-20', amount: 900000 },
-            { id: '5', bill_id: 'BILL004', paid_at: '2025-11-20', amount: 900000 },
-            { id: '6', bill_id: 'BILL004', paid_at: '2025-11-20', amount: 900000 },
-            { id: '7', bill_id: 'BILL004', paid_at: '2025-11-20', amount: 900000 },
-            { id: '8', bill_id: 'BILL004', paid_at: '2025-11-20', amount: 900000 },
-          ]);
-          setLoading(false);
-        }, 800);
-      } else {
-        try {
-          const response = await fetch(`${API_URL}/showfees`);
-          if (!response.ok) throw new Error('Lỗi server');
-          const data = await response.json();
-          setFees(data);
-        } catch (err) {
-          console.error("Fetch error:", err);
-          alert("Không thể tải dữ liệu từ Backend!");
-        } finally {
-          setLoading(false);
-        }
+      try {
+        const response = await fetch(`${API_URL}/showfees`);
+        if (!response.ok) throw new Error('Lỗi server');
+        const data = await response.json();
+        setFees(data);
+      } catch (err) {
+        console.error("Fetch error:", err);
+        alert("Không thể tải dữ liệu từ Backend!");
+      } finally {
+        setLoading(false);
       }
     };
     fetchFees();
