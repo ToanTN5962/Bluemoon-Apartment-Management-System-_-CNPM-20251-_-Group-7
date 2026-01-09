@@ -169,42 +169,42 @@ export default function AccountPage() {
             
             <div style={{ display: 'flex', alignItems: 'center', gap: '30px' }}>
               <label style={labelStyle}>Full Name</label>
-              <input type="text" value={formData.fullName || formData.name || ''} readOnly style={readOnlyInputStyle} />
+              <input type="text" value={formData.user.fullName || formData.name || ''} readOnly style={readOnlyInputStyle} />
             </div>
 
             <div style={{ display: 'flex', alignItems: 'center', gap: '30px' }}>
               <label style={labelStyle}>Email</label>
-              <input type="email" value={formData.email || ''} readOnly style={readOnlyInputStyle} />
+              <input type="email" value={formData.user.email || ''} readOnly style={readOnlyInputStyle} />
             </div>
 
             <div style={{ display: 'flex', alignItems: 'center', gap: '30px' }}>
               <label style={labelStyle}>Date of Birth</label>
-              <input type="date" value={formData.dateOfBirth || ''} readOnly style={readOnlyInputStyle} />
+              <input type="date" value={formData.user.dateOfBirth || ''} readOnly style={readOnlyInputStyle} />
             </div>
 
             <div style={{ display: 'flex', alignItems: 'center', gap: '30px' }}>
               <label style={labelStyle}>Phone Number</label>
-              <input type="text" value={formData.phoneNumber1 || formData.phoneNum || formData.phone || ''} readOnly style={readOnlyInputStyle} />
+              <input type="text" value={formData.user.phoneNum || formData.user.phone || ''} readOnly style={readOnlyInputStyle} />
             </div>
 
             <div style={{ display: 'flex', alignItems: 'center', gap: '30px' }}>
               <label style={labelStyle}>Identity No.</label>
-              <input type="text" value={formData.identityNumber || ''} readOnly style={readOnlyInputStyle} />
+              <input type="text" value={formData.resident.identificationNumber || ''} readOnly style={readOnlyInputStyle} />
             </div>
 
             <div style={{ display: 'flex', alignItems: 'center', gap: '30px' }}>
               <label style={labelStyle}>Room Number</label>
-              <input type="text" value={formData.roomNumber || ''} readOnly style={readOnlyInputStyle} />
+              <input type="text" value={formData.household.roomNumber || ''} readOnly style={readOnlyInputStyle} />
             </div>
 
             <div style={{ display: 'flex', alignItems: 'center', gap: '30px' }}>
               <label style={labelStyle}>Family Role</label>
-              <input type="text" value={formData.familyRole ? formData.familyRole.toUpperCase() : ''} readOnly style={readOnlyInputStyle} />
+              <input type="text" value={(formData.household.owner == formData.user.fullName) ? 'Owner' : 'Family Member'} readOnly style={readOnlyInputStyle} />
             </div>
 
             <div style={{ display: 'flex', alignItems: 'center', gap: '30px' }}>
               <label style={labelStyle}>Status</label>
-              <input type="text" value={formData.status ? formData.status.toUpperCase() : (formData.isActive ? 'ACTIVE' : 'INACTIVE')} readOnly style={readOnlyInputStyle} />
+              <input type="text" value={formData.resident.status ? formData.resident.status.toUpperCase() : (formData.isActive ? 'ACTIVE' : 'INACTIVE')} readOnly style={readOnlyInputStyle} />
             </div>
 
             <div style={{ display: 'flex', justifyContent: 'center', marginTop: '30px' }}>

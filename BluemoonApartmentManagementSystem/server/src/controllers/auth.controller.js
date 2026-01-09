@@ -87,7 +87,13 @@ const login = async (req, res) => {
 const getinfo = async (req, res) => {
   try{
     const user = await prisma.user.findUnique({where: {id: req.userId}});
-    return res.json(user);
+    const resident = await prisma.resident.findUnique({where: {id: user.residentId}})
+    const household = await prisma.household.findUnique({where: {id: resident.householdId}})
+    return res.json({
+      user,
+      resident,
+      household
+    });
   } catch(err){
     return res.status(500).json({error: err.message});
   };

@@ -79,7 +79,7 @@ export default function CheckFee() {
         }
 
         .empty {
-          color: black;
+          color: white;
           text-align: center;
           margin-top: 40px;
         }
