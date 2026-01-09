@@ -6,7 +6,8 @@ const prisma = require("../prisma/client");
 
 exports.createcomplaint = async (req, res) => {
     try {
-        const { userId, description } = req.body;
+        const { description } = req.body;
+        const userId = req.userId;
 
         if(!userId || !description){
             return res.status(400).json({ message: "Missing required fields" });
@@ -19,8 +20,9 @@ exports.createcomplaint = async (req, res) => {
 
         const newComplaint = await prisma.complaint.create({
             data: {
-                userId,
-                description: description.trim(),
+                userId: userId,
+                content: description.trim(),
+                complaintStatus: "UNSOLVED"
             }
         });
 

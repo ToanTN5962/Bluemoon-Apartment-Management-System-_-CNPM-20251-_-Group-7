@@ -29,8 +29,8 @@ function SendFeedback() {
         return;
       }
 
-      const decoded = JSON.parse(atob(token.split('.')[1]));
-      console.log('Decoded token:', decoded);
+      //const decoded = JSON.parse(atob(token.split('.')[1]));
+      //console.log('Decoded token:', decoded);
 
       const response = await fetch('http://localhost:3000/api/complaints/createcomplaint', {
         method: 'POST',
@@ -39,7 +39,6 @@ function SendFeedback() {
           'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({
-          userId: decoded.id,
           description: content,
         })
       });
