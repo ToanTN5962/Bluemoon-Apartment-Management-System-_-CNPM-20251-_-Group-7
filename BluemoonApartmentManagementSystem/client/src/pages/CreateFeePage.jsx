@@ -24,24 +24,6 @@ export default function CreateFeePage() {
     }));
   };
 
-  const selectStyle = {
-      width: '100%',
-      padding: '12px 16px',
-      borderRadius: '12px',
-      border: '1px solid #E2E8F0',
-      fontSize: '16px',
-      backgroundColor: 'white',
-      appearance: 'none',
-      WebkitAppearance: 'none',
-      backgroundImage: `url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%236B7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E")`,
-      backgroundRepeat: 'no-repeat',
-      backgroundPosition: 'right 16px center',
-      backgroundSize: '1.2em',
-      color: '#1A202C',
-      cursor: 'pointer',
-      marginTop: '8px'
-    };
-
   const handleSubmit = async () => {
     // Validate form
     if (!formData.name || !formData.cycle || !formData.amount) {

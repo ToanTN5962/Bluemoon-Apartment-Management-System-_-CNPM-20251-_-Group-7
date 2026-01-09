@@ -107,6 +107,21 @@ const FeePage = () => {
         .btn-primary { background: #1e40af; color: white; }
         .btn-primary:hover { background: #1d4ed8; }
 
+        .btn-back {
+          background: transparent;
+          color: white;
+          border: 2px solid white;
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          font-size: 14px;
+          padding: 8px 16px;
+        }
+        .btn-back:hover {
+          background: rgba(255, 255, 255, 0.1);
+          transform: translateX(-3px);
+        }
+
         /* Fee List Section */
         .fee-list { display: flex; flex-direction: column; gap: 15px; }
         
@@ -172,18 +187,25 @@ const FeePage = () => {
 
       <div className="container">
         <header className="header">
-          <h1>Danh sách khoản thu</h1>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+            <button className="btn btn-back" onClick={() => navigate('/admin')}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M19 12H5M12 19l-7-7 7-7" />
+              </svg>
+              Back to Dashboard
+            </button>
+            <h1>Danh sách khoản thu</h1>
+          </div>
           <div className="btn-group">
             <button className="btn btn-primary" onClick={() => navigate('/admin/create-fee')}>Tạo mới</button>
-            
           </div>
         </header>
 
         <main className="fee-list">
           {loading ? (
-            <div style={{color: 'white', textAlign: 'center'}}>Đang tải dữ liệu...</div>
+            <div style={{ color: 'white', textAlign: 'center' }}>Đang tải dữ liệu...</div>
           ) : fees.length === 0 ? (
-            <div style={{color: 'white', textAlign: 'center'}}>Trống dữ liệu</div>
+            <div style={{ color: 'white', textAlign: 'center' }}>Trống dữ liệu</div>
           ) : (
             fees.map(fee => (
               <div key={fee.id} className="fee-card" onClick={() => navigate('/admin/update-fee', { state: { fee } })}>
@@ -203,7 +225,7 @@ const FeePage = () => {
                     </span>
                   </div>
                 </div>
-                
+
                 <button className="delete-icon" onClick={(e) => {
                   e.stopPropagation(); // Ngăn việc nhảy trang khi bấm nút xóa
                   handleDelete(fee.id);
