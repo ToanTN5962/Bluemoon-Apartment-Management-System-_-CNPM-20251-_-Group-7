@@ -18,6 +18,7 @@ import SendFeedback from './pages/SendFeedback'
 import CheckFee from './pages/CheckFee';
 import UpdateFeePage from './pages/UpdateFeePage';
 import AfterFeePage from './pages/AfterFeePage';
+import FindUserPage from './pages/FindUserPage';
 
 function App() {
   return (
@@ -42,6 +43,7 @@ function App() {
         <Route path="/check-fees" element={<CheckFee />} />
         <Route path="/admin/update-fee" element={<UpdateFeePage/>} />
         <Route path="/admin/check-fee" element={<AfterFeePage/>} />
+        <Route path="/admin/find-user" element={<FindUserPage/>} />
       </Routes>
     </Router>
   );

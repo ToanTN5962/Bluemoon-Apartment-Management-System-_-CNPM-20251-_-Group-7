@@ -73,3 +73,35 @@ exports.requestUpdateInfo = async (req, res) => {
     });
   }
 };
+
+// GET /api/users/search?q=
+exports.search = async (req, res) => {
+  try {
+    const q = req.query.q;
+
+    if (!q) {
+      return res.status(400).json({ message: "Missing query" });
+    }
+
+    const users = await prisma.user.findMany({
+      where: {
+        OR: [
+          { email: { contains: q } },
+          { phoneNum: { contains: q } },
+          { fullName: { contains: q } }
+        ]
+      },
+      select: {
+        id: true,
+        fullName: true,
+        email: true,
+        phoneNum: true
+      }
+    });
+
+    res.json(users);
+  } catch (err) {
+    console.error("PRISMA SEARCH ERROR:", err);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};

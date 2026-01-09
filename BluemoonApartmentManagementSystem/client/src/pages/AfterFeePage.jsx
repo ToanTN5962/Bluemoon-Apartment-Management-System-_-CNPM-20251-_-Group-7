@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import backgroundImage from '../assets/images/login-bg.jpg';
 
-// === CẤU HÌNH HỆ THỐNG ===
 const USE_MOCK = true;
 const API_URL = 'http://localhost:3000/api/bills/payment-status';
 
