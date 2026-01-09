@@ -1,8 +1,8 @@
 const prisma = require("../prisma/client");
 
-// exports.getAllComplaints = async (req, res) => {
-//     res.json(await prisma.complaint.findMany());
-// }
+exports.getAllComplaints = async (req, res) => {
+    res.json(await prisma.complaint.findMany());
+}
 
 exports.createcomplaint = async (req, res) => {
     try {

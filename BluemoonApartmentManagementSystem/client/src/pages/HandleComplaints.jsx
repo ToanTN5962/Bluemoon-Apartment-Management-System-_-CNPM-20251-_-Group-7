@@ -17,18 +17,20 @@ function HandleComplaints() {
     }
     setCurrentAdmin(JSON.parse(storedUser));
 
-    // Fetch complaints (thay URL backend thực tế)
-    fetch('http://localhost:3001/complaints')
-      .then(res => res.json())
-      .then(data => {
+    const getComplaints = async () => {
+      try {
+        const response = await fetch('http://localhost:3000/api/complaints/getall');
+        if (!response.ok) throw new Error('Failed to fetch complaints');
+        const data = await response.json();
         setComplaints(data);
-        setLoading(false);
-      })
-      .catch(err => {
+      } catch (err) {
         console.error('Fetch complaints error:', err);
-        
+      } finally {
         setLoading(false);
-      });
+      }
+    };
+
+    getComplaints();
   }, [navigate]);
 
   const handleRemove = (id) => {
@@ -119,24 +121,11 @@ function HandleComplaints() {
           Back to dashboard
         </button>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+        {/* <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
           <span style={{ color: 'white', fontSize: '18px' }}>
             Admin: {currentAdmin?.name || currentAdmin?.email}
           </span>
-          <button
-            onClick={handleLogout}
-            style={{
-              padding: '10px 22px',
-              background: '#dc2626',
-              color: 'white',
-              border: 'none',
-              borderRadius: '30px',
-              cursor: 'pointer',
-            }}
-          >
-            Logout
-          </button>
-        </div>
+        </div> */}
       </div>
 
       <h1 style={titleStyle}>Danh sách phản ánh / khiếu nại</h1>
