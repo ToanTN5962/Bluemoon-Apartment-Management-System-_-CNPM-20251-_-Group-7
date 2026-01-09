@@ -9,96 +9,119 @@ const USE_MOCK = false; // Chuyển thành false khi có API thật
 const API_URL = 'http://localhost:3000/api/fees';
 
 const UpdateFeePage = () => {
-    const navigate = useNavigate();
-    const location = useLocation();
-    const fee = location.state?.fee;
+  const navigate = useNavigate();
+  const location = useLocation();
+  const fee = location.state?.fee;
 
-    const [formData, setFormData] = useState({
-        id: '',
-        name: '',
-        amount: '',
-        cycle: ''
+  const selectStyle = {
+  width: '100%',
+  padding: '12px 16px',
+  borderRadius: '12px', // Bo góc giống ô Tên hóa đơn của bạn
+  border: '1px solid #E2E8F0',
+  fontSize: '16px',
+  backgroundColor: 'white',
+  appearance: 'none', // Quan trọng: Xóa mũi tên mặc định
+  WebkitAppearance: 'none',
+  backgroundImage: `url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%236B7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E")`,
+  backgroundRepeat: 'no-repeat',
+  backgroundPosition: 'right 16px center',
+  backgroundSize: '1.2em',
+  color: '#1A202C',
+  cursor: 'pointer',
+  marginTop: '8px'
+};
+
+  const [formData, setFormData] = useState({
+    id: '',
+    name: '',
+    amount: '',
+    cycle: ''
+  });
+  useEffect(() => {
+    if (!fee) {
+      alert('Không có dữ liệu khoản thu!');
+      navigate('/admin/fee');
+      return;
+    }
+
+    setFormData({
+      id: fee.id,
+      name: fee.name,
+      amount: fee.amount,
+      cycle: fee.cycle
     });
-    useEffect(() => {
-        if (fee) {
-            setFormData({
-                id: fee.id,
-                name: fee.name,
-                amount: fee.amount,
-                cycle: fee.cycle
-            });
-        }
-    }, [fee]);
+  }, [fee, navigate]);
 
-    const [isSubmitting, setIsSubmitting] = useState(false);
-    const [message, setMessage] = useState('');
 
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData(prev => ({
-            ...prev,
-            [name]: value
-        }));
-    };
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [message, setMessage] = useState('');
 
-    const handleSubmit = async () => {
-        // Validate form
-        if (!formData.name || !formData.cycle || !formData.amount) {
-            setMessage('Vui lòng điền đầy đủ thông tin!');
-            return;
-        }
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
 
-        setIsSubmitting(true);
-        setMessage('');
+  const handleSubmit = async () => {
+    // Validate form
+    if (!formData.name || !formData.cycle || !formData.amount) {
+      setMessage('Vui lòng điền đầy đủ thông tin!');
+      return;
+    }
 
-        if (USE_MOCK) {
-            // Giả lập thời gian xử lý
-            setTimeout(() => {
-                console.log('Update data:', formData);
-                setMessage('Đã cập nhật thông tin thành công!');
-                setIsSubmitting(false);
+    setIsSubmitting(true);
+    setMessage('');
 
-                // Reset form sau 1.5s và quay về trang danh sách
-                setTimeout(() => {
-                    navigate('/admin/fee');
-                }, 1500);
-            }, 800);
+    if (USE_MOCK) {
+      // Giả lập thời gian xử lý
+      setTimeout(() => {
+        console.log('Update data:', formData);
+        setMessage('Đã cập nhật thông tin thành công!');
+        setIsSubmitting(false);
+
+        // Reset form sau 1.5s và quay về trang danh sách
+        setTimeout(() => {
+          navigate('/admin/fee');
+        }, 1500);
+      }, 800);
+    } else {
+      try {
+        console.log("UPDATE ID =", formData.id);
+
+        const response = await fetch(`${API_URL}/${formData.id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            name: formData.name,
+            cycle: formData.cycle,
+            amount: parseInt(formData.amount)
+          })
+        });
+
+        if (response.ok) {
+          setMessage('Đã cập nhật thông tin thành công!');
+          setTimeout(() => {
+            navigate('/admin/fee');
+          }, 1500);
         } else {
-            try {
-                console.log("UPDATE ID =", formData.id);
-
-                const response = await fetch(`${API_URL}/${formData.id}`, {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        name: formData.name,
-                        cycle: formData.cycle,
-                        amount: parseInt(formData.amount)
-                    })
-                });
-
-                if (response.ok) {
-                    setMessage('Đã cập nhật thông tin thành công!');
-                    setTimeout(() => {
-                        navigate('/admin/fee');
-                    }, 1500);
-                } else {
-                    setMessage('Có lỗi xảy ra. Vui lòng thử lại.');
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                setMessage('Không thể kết nối với server. Vui lòng kiểm tra lại.');
-            } finally {
-                setIsSubmitting(false);
-            }
+          setMessage('Có lỗi xảy ra. Vui lòng thử lại.');
         }
-    };
+      } catch (error) {
+        console.error('Error:', error);
+        setMessage('Không thể kết nối với server. Vui lòng kiểm tra lại.');
+      } finally {
+        setIsSubmitting(false);
+      }
+    }
+  };
 
-    return (
-        <div className="update-fee-page">
-            <style>{`
+  return (
+    <div className="update-fee-page">
+      <style>{`
         .update-fee-page {
           min-height: 100vh;
           background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url(${backgroundImage});
@@ -264,71 +287,79 @@ const UpdateFeePage = () => {
         }
       `}</style>
 
-            <div className="form-container">
-                <div className="form-header">
-                    <h1>Cập nhật khoản thu</h1>
-                    <p>Nhập thông tin cần cập nhật cho hóa đơn</p>
-                </div>
-
-                <div className="form-field">
-                    <label>Tên hóa đơn</label>
-                    <input
-                        type="text"
-                        name="name"
-                        value={formData.name}
-                        onChange={handleChange}
-                        placeholder="Nhập tên hóa đơn"
-                    />
-                </div>
-
-                <div className="form-field">
-                    <label>Cycle</label>
-                    <input
-                        type="text"
-                        name="cycle"
-                        value={formData.cycle}
-                        onChange={handleChange}
-                        placeholder="DAILY"
-                    />
-                </div>
-
-                <div className="form-field">
-                    <label>Số tiền (VNĐ)</label>
-                    <input
-                        type="number"
-                        name="amount"
-                        value={formData.amount}
-                        onChange={handleChange}
-                        placeholder="Nhập số tiền"
-                        step="1000"
-                        min="0"
-                    />
-                </div>
-
-                <div className="button-group">
-                    <button
-                        className="btn btn-cancel"
-                        onClick={() => navigate('/admin/fee')}
-                    >
-                        Hủy
-                    </button>
-                    <button
-                        className="btn btn-submit"
-                        onClick={handleSubmit}
-                        disabled={isSubmitting}
-                    >
-                        {isSubmitting ? 'Đang xử lý...' : 'Cập nhật'}
-                    </button>
-                </div>
-
-                {message && (
-                    <div className={`message ${message.includes('thành công') ? 'success' : 'error'}`}>
-                        {message}
-                    </div>
-                )}
-            </div>
+      <div className="form-container">
+        <div className="form-header">
+          <h1>Cập nhật khoản thu</h1>
+          <p>Nhập thông tin cần cập nhật cho hóa đơn</p>
         </div>
-    );
+
+        <div className="form-field">
+          <label>Tên hóa đơn</label>
+          <input
+            type="text"
+            name="name"
+            value={formData.name}
+            onChange={handleChange}
+            placeholder="Nhập tên hóa đơn"
+          />
+        </div>
+
+        <div className="form-field">
+          <label>Cycle</label>
+          <div style={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
+            
+            <select
+              name="cycle"
+              value={formData.cycle}
+              onChange={handleChange}
+              style={selectStyle}
+            >
+              <option value="" disabled>-- Chọn chu kỳ --</option>
+              <option value="DAILY">Hàng ngày (DAILY)</option>
+              <option value="MONTHLY">Hàng tháng (MONTHLY)</option>
+              <option value="YEARLY">Hàng năm (YEARLY)</option>
+            </select>
+          </div>
+
+        </div>
+
+        <div className="form-field">
+          <label>Số tiền (VNĐ)</label>
+          <input
+            type="number"
+            name="amount"
+            value={formData.amount}
+            onChange={handleChange}
+            placeholder="Nhập số tiền"
+            step="1000"
+            min="0"
+          />
+        </div>
+
+        <div className="button-group">
+          <button
+            className="btn btn-cancel"
+            onClick={() => navigate('/admin/fee')}
+          >
+            Hủy
+          </button>
+          <button
+            className="btn btn-submit"
+            onClick={handleSubmit}
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? 'Đang xử lý...' : 'Cập nhật'}
+          </button>
+        </div>
+
+        {message && (
+          <div className={`message ${message.includes('thành công') ? 'success' : 'error'}`}>
+            {message}
+          </div>
+        )}
+      </div>
+    </div>
+  );
 };
 
 export default UpdateFeePage;
