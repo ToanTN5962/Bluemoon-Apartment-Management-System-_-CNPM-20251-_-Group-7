@@ -87,6 +87,14 @@ const login = async (req, res) => {
 const getinfo = async (req, res) => {
   try{
     const user = await prisma.user.findUnique({where: {id: req.userId}});
+
+    if(user.role == 'ADMIN'){
+      return res.json({
+        user,
+        resident: null,
+        household: null
+      });
+    }
     const resident = await prisma.resident.findUnique({where: {id: user.residentId}})
     const household = await prisma.household.findUnique({where: {id: resident.householdId}})
     return res.json({

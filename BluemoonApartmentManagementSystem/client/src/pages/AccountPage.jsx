@@ -187,25 +187,31 @@ export default function AccountPage() {
               <input type="text" value={formData.user.phoneNum || formData.user.phone || ''} readOnly style={readOnlyInputStyle} />
             </div>
 
-            <div style={{ display: 'flex', alignItems: 'center', gap: '30px' }}>
-              <label style={labelStyle}>Identity No.</label>
-              <input type="text" value={formData.resident.identificationNumber || ''} readOnly style={readOnlyInputStyle} />
-            </div>
+            {formData.user.role !== 'ADMIN' && (
+              <>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '30px' }}>
+                  <label style={labelStyle}>Identity No.</label>
+                  <input type="text" value={formData.resident.identificationNumber || ''} readOnly style={readOnlyInputStyle} />
+                </div>
 
-            <div style={{ display: 'flex', alignItems: 'center', gap: '30px' }}>
-              <label style={labelStyle}>Room Number</label>
-              <input type="text" value={formData.household.roomNumber || ''} readOnly style={readOnlyInputStyle} />
-            </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '30px' }}>
+                  <label style={labelStyle}>Room Number</label>
+                  <input type="text" value={formData.household.roomNumber || ''} readOnly style={readOnlyInputStyle} />
+                </div>
 
-            <div style={{ display: 'flex', alignItems: 'center', gap: '30px' }}>
-              <label style={labelStyle}>Family Role</label>
-              <input type="text" value={(formData.household.owner == formData.user.fullName) ? 'Owner' : 'Family Member'} readOnly style={readOnlyInputStyle} />
-            </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '30px' }}>
+                  <label style={labelStyle}>Family Role</label>
+                  <input type="text" value={(formData.household.owner == formData.user.fullName) ? 'Owner' : 'Family Member'} readOnly style={readOnlyInputStyle} />
+                </div>
 
-            <div style={{ display: 'flex', alignItems: 'center', gap: '30px' }}>
-              <label style={labelStyle}>Status</label>
-              <input type="text" value={formData.resident.status ? formData.resident.status.toUpperCase() : (formData.isActive ? 'ACTIVE' : 'INACTIVE')} readOnly style={readOnlyInputStyle} />
-            </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '30px' }}>
+                  <label style={labelStyle}>Status</label>
+                  <input type="text" value={formData.resident.status ? formData.resident.status.toUpperCase() : (formData.isActive ? 'ACTIVE' : 'INACTIVE')} readOnly style={readOnlyInputStyle} />
+                </div>
+              </>
+            )}
+
+            
 
             <div style={{ display: 'flex', justifyContent: 'center', marginTop: '30px' }}>
               <button 
