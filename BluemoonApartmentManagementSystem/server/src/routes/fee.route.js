@@ -4,5 +4,6 @@ router.post("/", c.create);
 router.get("/showfees", c.getAll);
 router.get("/", c.test);
 router.delete("/:id", c.remove);
+router.put("/:id", c.update);
 
 module.exports = router;
