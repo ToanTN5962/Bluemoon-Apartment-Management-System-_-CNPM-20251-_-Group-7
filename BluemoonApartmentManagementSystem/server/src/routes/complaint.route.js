@@ -7,6 +7,7 @@ router.get("/getall", c.getAllComplaints);
 router.delete("/:id", c.deleteComplaint);
 
 
+
 // route.get("/:id", c.getComplaintById);
 // route.put("/:id", c.updateComplaintStatus);
 

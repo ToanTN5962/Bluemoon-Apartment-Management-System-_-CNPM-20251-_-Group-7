@@ -43,8 +43,6 @@ exports.deleteComplaint = async (req, res) => {
   res.json({ message: "Deleted" });
 };
 
-
-
 // exports.getComplaintById = async (req, res) => {
 //     const { id } = req.params;
 //     res.json(await prisma.complaint.findUnique({ where: { id: parseInt(id) } }));

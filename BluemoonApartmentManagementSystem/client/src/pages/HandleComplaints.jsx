@@ -251,13 +251,13 @@ function HandleComplaints() {
                 {/* Status Dropdown */}
                 <div style={dropdownContainerStyle}>
                   <button
-                    style={statusBtnStyle(item.status)}
+                    style={statusBtnStyle(item.complaintStatus)}
                     onClick={(e) => {
                       e.stopPropagation();
                       setOpenDropdown(openDropdown === item.id ? null : item.id);
                     }}
                   >
-                    {item.status || 'UNSOLVED'}
+                    {item.complaintStatus || 'UNSOLVED'}
                     <span style={{ fontSize: '12px' }}>▼</span>
                   </button>
 

@@ -4,12 +4,12 @@ import backgroundImage from '../assets/images/resetPass-bg.jpg';
 
 function VerifyUserPage() {
   const navigate = useNavigate();
-  const [currentAdmin, setCurrentAdmin] = useState(null); // để check auth
+  const [currentAdmin, setCurrentAdmin] = useState(null);
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Kiểm tra auth giống AdminPage
+    // Kiểm tra auth
     const storedUser = localStorage.getItem('user');
     if (storedUser) {
       const userData = JSON.parse(storedUser);
@@ -34,6 +34,14 @@ function VerifyUserPage() {
         setLoading(false);
       } catch (err) {
         console.error('Lỗi fetch:', err);
+        // Fallback dữ liệu mẫu nếu backend lỗi hoặc đang test
+        setUsers([
+          { id: 1, fullName: "Nguyễn Văn A", dob: "15/03/1990", sex: "Nam", phone: "0123456789", email: "nguyenvana@example.com" },
+          { id: 2, fullName: "Trần Thị B", dob: "22/07/1995", sex: "Nữ", phone: "0987654321", email: "tranthib@example.com" },
+          { id: 3, fullName: "Lê Văn C", dob: "10/11/1985", sex: "Nam", phone: "0111222333", email: "levanc@example.com" },
+          { id: 4, fullName: "Phạm Thị D", dob: "05/05/2000", sex: "Nữ", phone: "0444555666", email: "phamthid@example.com" },
+          { id: 5, fullName: "Hoàng Văn E", dob: "01/01/1992", sex: "Nam", phone: "0555666777", email: "hoangvane@example.com" },
+        ]);
         setLoading(false);
       }
     };
@@ -43,7 +51,7 @@ function VerifyUserPage() {
 
   const handleVerify = (userId, email) => {
     // Gửi request verify tới backend
-    fetch('https://your-backend.com/api/verify', {  // <-- sửa URL backend thực tế
+    fetch('https://your-backend.com/api/verify', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ id: userId, email })
@@ -61,19 +69,18 @@ function VerifyUserPage() {
   };
 
   const handleBack = () => {
-    navigate('/admin'); // hoặc path của AdminPage (thường là '/admin' hoặc '/admin/dashboard')
+    navigate('/admin');
   };
 
   const handleLogout = () => {
     localStorage.removeItem('user');
+    localStorage.removeItem('token');
     navigate('/');
   };
 
-  // Nếu bạn có import backgroundImage, dùng biến đó. Nếu không, dùng URL stock tương tự hình bạn upload
   const backgroundStyle = {
     minHeight: '100vh',
     backgroundImage: `url(${backgroundImage})`,
-    // backgroundImage: backgroundImage ? `url(${backgroundImage})` : 'none',
     backgroundSize: 'cover',
     backgroundPosition: 'center',
     backgroundAttachment: 'fixed',
