@@ -10,7 +10,7 @@ export default function UpdateInfoPage() {
     email: '',
     phoneNum: '',
     identificationNumber: '',
-    //roomNumber: '',
+    roomNumber: '',
     //householdId: '',
     dateOfBirth: '',
     familyRole: 'OWNER',
@@ -59,9 +59,9 @@ export default function UpdateInfoPage() {
     if (!formData.identificationNumber.trim()) {
       return alert('Please enter your identification number');
     }
-    //if (!formData.roomNumber.trim()) {
-    //  return alert('Please enter your room number');
-    //}
+    if (!formData.roomNumber.trim()) {
+     return alert('Please enter your room number');
+    }
 
     setLoading(true);
 
@@ -71,7 +71,7 @@ export default function UpdateInfoPage() {
       email: formData.email,
       phoneNum: formData.phoneNum,
       identificationNumber: formData.identificationNumber,
-      //roomNumber: formData.roomNumber,
+      roomNumber: formData.roomNumber,
       //householdId: parseInt(formData.householdId),
       dateOfBirth: formData.dateOfBirth,
       familyRole: formData.familyRole,
@@ -358,8 +358,9 @@ export default function UpdateInfoPage() {
               />
             </div>
 
-            {/* 
-            { Room Number }
+
+
+            {/* Room Number */}
             <div style={{
               display: 'flex',
               alignItems: 'center',
@@ -393,7 +394,7 @@ export default function UpdateInfoPage() {
                 }}
               />
             </div>
-            */}
+           
             {/* Family Role */}
             <div style={{
               display: 'flex',
@@ -446,7 +447,7 @@ export default function UpdateInfoPage() {
                 color: '#1e3a8a',
                 textAlign: 'left'
               }}>
-                status
+                Status
               </label>
               <select
                 name="statusRole"

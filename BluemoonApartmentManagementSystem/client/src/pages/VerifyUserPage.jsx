@@ -19,26 +19,26 @@ function VerifyUserPage() {
       return;
     }
 
-    // Fetch danh sách user cần verify (thay bằng endpoint thực tế của bạn)
-    fetch('https://your-backend.com/api/unverified-users') // <-- sửa URL backend thực tế
-      .then(response => response.json())
-      .then(data => {
+    const fetchUsersToVerify = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch('http://localhost:3000/api/users/getupdaterequests', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        });
+        const data = await response.json();
         setUsers(data);
         setLoading(false);
-      })
-      .catch(err => {
+      } catch (err) {
         console.error('Lỗi fetch:', err);
-        // Fallback dữ liệu mẫu nếu backend lỗi hoặc đang test
-        setUsers([
-          { id: 1, fullName: "Nguyễn Văn A", dob: "15/03/1990", sex: "Nam", phone: "0123456789", email: "nguyenvana@example.com" },
-          { id: 2, fullName: "Trần Thị B", dob: "22/07/1995", sex: "Nữ", phone: "0987654321", email: "tranthib@example.com" },
-          { id: 3, fullName: "Lê Văn C", dob: "10/11/1985", sex: "Nam", phone: "0111222333", email: "levanc@example.com" },
-          { id: 4, fullName: "Phạm Thị D", dob: "05/05/2000", sex: "Nữ", phone: "0444555666", email: "phamthid@example.com" },
-          { id: 5, fullName: "Hoàng Văn E", dob: "01/01/1992", sex: "Nam", phone: "0555666777", email: "hoangvane@example.com" },
-          // Thêm nhiều hơn để test scroll
-        ]);
         setLoading(false);
-      });
+      }
+    };
+
+    fetchUsersToVerify();
   }, [navigate]);
 
   const handleVerify = (userId, email) => {
