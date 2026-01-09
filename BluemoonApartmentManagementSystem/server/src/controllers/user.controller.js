@@ -10,6 +10,10 @@ exports.getById = async (req, res) => {
   }));
 };
 
+exports.getAllUpdateRequests = async (_, res) => {
+  res.json(await prisma.updateInfo.findMany());
+}
+
 // POST api/users/request-update
 exports.requestUpdateInfo = async (req, res) => {
   const {userId, fullName, email, phoneNum, identificationNumber /*, householdId, roomNumber */, dateOfBirth} = req.body;
