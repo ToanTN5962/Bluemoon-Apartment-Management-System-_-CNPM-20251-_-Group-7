@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import backgroundImage from '../assets/images/afterLogin-bg.jpg';
 
-const API_URL = 'http://localhost:3001/fees';
 
 export default function CheckFee() {
   const navigate = useNavigate();
@@ -10,15 +9,24 @@ export default function CheckFee() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch(API_URL)
-      .then(res => res.json())
-      .then(data => {
+    const getFees = async() => {
+      try {
+        const response = await fetch('http://localhost:3000/api/fees/showfees', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+        const data = await response.json();
         setFees(Array.isArray(data) ? data : []);
-      })
-      .catch(() => {
+      } catch (err) {
         setFees([]);
-      })
-      .finally(() => setLoading(false));
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    getFees();
   }, []);
 
   return (
@@ -96,12 +104,12 @@ export default function CheckFee() {
           ← Back to Dashboard
         </button>
 
-        <h1>Khoản thu của tôi</h1>
+        <h1>Khoản phí của tôi</h1>
 
         {loading ? (
           <div className="empty">Đang tải dữ liệu...</div>
         ) : fees.length === 0 ? (
-          <div className="empty">Chưa có khoản thu nào</div>
+          <div className="empty">Chưa có khoản phí nào</div>
         ) : (
           <div className="fee-list">
             {fees.map(fee => (
@@ -109,6 +117,15 @@ export default function CheckFee() {
     <div>
       <div className="label">Mã hóa đơn</div>
       <div>{fee.bill_id || '—'}</div>
+    </div>
+
+    <div>
+      <div className="label">Tên khoản phí</div>
+      <div>
+        {fee.name
+          ? fee.name
+          : '—'}
+      </div>
     </div>
 
     <div>
