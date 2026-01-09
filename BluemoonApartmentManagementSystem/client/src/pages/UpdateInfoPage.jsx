@@ -450,8 +450,8 @@ export default function UpdateInfoPage() {
                 Status
               </label>
               <select
-                name="statusRole"
-                value={formData.statusRole}
+                name="status"
+                value={formData.status}
                 onChange={handleChange}
                 style={{
                   flex: 1,

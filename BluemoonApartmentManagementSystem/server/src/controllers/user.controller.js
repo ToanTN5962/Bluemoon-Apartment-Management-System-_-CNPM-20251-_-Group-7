@@ -16,15 +16,14 @@ exports.getAllUpdateRequests = async (_, res) => {
 
 // POST api/users/request-update
 exports.requestUpdateInfo = async (req, res) => {
-  const {userId, fullName, email, phoneNum, identificationNumber /*, householdId, roomNumber */, dateOfBirth} = req.body;
-
+  const {userId, fullName, email, phoneNum, identificationNumber, roomNumber, dateOfBirth, familyRole, status} = req.body;
+  
   const missingFields = [];
   if (!fullName) missingFields.push("fullName");
   if (!email) missingFields.push("email");
   if (!identificationNumber) missingFields.push("identificationNumber");
-  // if (!roomNumber) missingFields.push("roomNumber");
   if (!dateOfBirth) missingFields.push("dateOfBirth");
-
+  
   if (missingFields.length > 0) {
     return res.status(400).json({
       message: `Please provide ${missingFields.join(", ")}`
@@ -39,41 +38,66 @@ exports.requestUpdateInfo = async (req, res) => {
   }
 
   try {
-    const newRequest = await prisma.updateInfo.create({
-      data: { 
-        user: {
-          connect: { id: parseInt(userId) }
-        },
-        fullName: fullName,
-        email: email,
-        phoneNum: phoneNum || "",
-        identificationNumber: identificationNumber,
-        // householdId: parseInt(householdId),
-        // roomNumber: roomNumber,
-        dateOfBirth: birthDateObj,
-        requestStatus: "PENDING"
+    let household = null;
+    if (roomNumber) {
+      const roomNumberInt = parseInt(roomNumber, 10);
+      if (!isNaN(roomNumberInt)) {
+        household = await prisma.household.findFirst({
+          where: {
+            roomNumber: roomNumberInt
+          }
+        });
       }
+    }
+
+    const createData = {
+      user: {
+        connect: { id: parseInt(userId) }
+      },
+      fullName: fullName,
+      email: email,
+      phoneNum: phoneNum || "",
+      identificationNumber: identificationNumber,
+      // XÓA HOÀN TOÀN dòng householdId: ...
+      dateOfBirth: birthDateObj,
+      familyRole: familyRole || "OWNER",
+      status: status || "ACTIVE",
+      requestStatus: "PENDING"
+    };
+
+    // Chỉ thêm household nếu tìm thấy
+    if (household) {
+      createData.household = {
+        connect: { id: parseInt(household.id) }
+      };
+    }
+
+    const newRequest = await prisma.updateInfo.create({
+      data: createData
     });
+    
     res.status(201).json({
       message: "Request submitted successfully. Please wait for admin approval.",
       data: newRequest
     });
-
   } catch (err) {
     console.error("Error creating update request:", err);
-    if (err.code === 'P2003') { // Foreign key constraint failed
+    
+    if (err.code === 'P2003') {
       return res.status(404).json({
         message: "User or household not found."
       });
     }
     
     if (err.code === 'P2025') {
-       return res.status(404).json({
+      return res.status(404).json({
         message: "User account not found to link request."
       });
     }
+    
     res.status(500).json({
-      message: "Internal server error."
+      message: "Internal server error.",
+      error: err.message
     });
   }
 };
