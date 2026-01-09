@@ -33,3 +33,21 @@ exports.remove = async (req, res) => {
     });
   }
 };
+
+exports.update = async (req, res) => {
+  try {
+    const fee = await prisma.fee.update({
+      where: { id: Number(req.params.id) },
+      data: {
+        name: req.body.name,
+        amount: req.body.amount,
+        cycle: req.body.cycle,
+      },
+    });
+
+    res.json(fee);
+  } catch (err) {
+    console.error(err);
+    res.status(400).json({ message: "Update failed" });
+  }
+};

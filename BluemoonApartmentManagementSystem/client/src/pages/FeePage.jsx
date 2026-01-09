@@ -175,7 +175,7 @@ const FeePage = () => {
           <h1>Danh sách khoản thu</h1>
           <div className="btn-group">
             <button className="btn btn-primary" onClick={() => navigate('/admin/create-fee')}>Tạo mới</button>
-            <button className="btn btn-primary" onClick={() => navigate('/admin/update-fee')}>Cập nhật</button>
+            
           </div>
         </header>
 
@@ -186,7 +186,7 @@ const FeePage = () => {
             <div style={{color: 'white', textAlign: 'center'}}>Trống dữ liệu</div>
           ) : (
             fees.map(fee => (
-              <div key={fee.id} className="fee-card" onClick={() => navigate('/admin/check-fee', { state: { fee } })}>
+              <div key={fee.id} className="fee-card" onClick={() => navigate('/admin/update-fee', { state: { fee } })}>
                 <div className="fee-details">
                   <div className="detail-item">
                     <label>Tên hóa đơn</label>
