@@ -33,6 +33,18 @@ exports.createcomplaint = async (req, res) => {
     }
 }
 
+exports.deleteComplaint = async (req, res) => {
+  const id = parseInt(req.params.id);
+
+  await prisma.complaint.delete({
+    where: { id }
+  });
+
+  res.json({ message: "Deleted" });
+};
+
+
+
 // exports.getComplaintById = async (req, res) => {
 //     const { id } = req.params;
 //     res.json(await prisma.complaint.findUnique({ where: { id: parseInt(id) } }));

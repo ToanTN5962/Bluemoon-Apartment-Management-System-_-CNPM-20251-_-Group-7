@@ -7,6 +7,7 @@ function HandleComplaints() {
   const [currentAdmin, setCurrentAdmin] = useState(null);
   const [complaints, setComplaints] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [openDropdown, setOpenDropdown] = useState(null);
 
   useEffect(() => {
     // Check auth
@@ -33,9 +34,59 @@ function HandleComplaints() {
     getComplaints();
   }, [navigate]);
 
-  const handleRemove = (id) => {
-    // Có thể call API xoá ở đây
-    setComplaints(prev => prev.filter(c => c.id !== id));
+  // Đóng dropdown khi click bên ngoài
+  useEffect(() => {
+    const handleClickOutside = () => setOpenDropdown(null);
+    if (openDropdown) {
+      document.addEventListener('click', handleClickOutside);
+      return () => document.removeEventListener('click', handleClickOutside);
+    }
+  }, [openDropdown]);
+
+  const handleRemove = async (id) => {
+    try {
+      const storedUser = JSON.parse(localStorage.getItem('user'));
+
+      const response = await fetch(
+        `http://localhost:3000/api/complaints/${id}`,
+        {
+          method: 'DELETE',
+          headers: {
+            Authorization: `Bearer ${storedUser.token}`,
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error('Delete failed');
+      }
+
+      // Xoá khỏi UI sau khi backend xoá thành công
+      setComplaints(prev => prev.filter(c => c.id !== id));
+    } catch (err) {
+      console.error('Delete complaint error:', err);
+      alert('Xoá khiếu nại thất bại');
+    }
+  };
+
+
+  const handleStatusChange = async (id, newStatus) => {
+    try {
+      // Gọi API để cập nhật trạng thái (nếu có)
+      // await fetch(`http://localhost:3000/api/complaints/${id}`, {
+      //   method: 'PATCH',
+      //   headers: { 'Content-Type': 'application/json' },
+      //   body: JSON.stringify({ status: newStatus })
+      // });
+
+      // Cập nhật local state
+      setComplaints(prev => prev.map(c =>
+        c.id === id ? { ...c, status: newStatus } : c
+      ));
+      setOpenDropdown(null);
+    } catch (err) {
+      console.error('Update status error:', err);
+    }
   };
 
   const handleBack = () => navigate('/admin');
@@ -100,17 +151,67 @@ function HandleComplaints() {
     backdropFilter: 'blur(6px)',
   };
 
-  const closeBtnStyle = {
+  const actionContainerStyle = {
     position: 'absolute',
     top: '16px',
     right: '16px',
-    width: '28px',
-    height: '28px',
+    display: 'flex',
+    gap: '10px',
+    alignItems: 'center',
+  };
+
+  const removeBtnStyle = {
+    padding: '8px 16px',
     borderRadius: '8px',
     border: 'none',
-    background: 'white',
-    fontWeight: 'bold',
+    background: '#ef4444',
+    color: 'white',
+    fontWeight: '600',
     cursor: 'pointer',
+    fontSize: '14px',
+    transition: 'all 0.2s',
+  };
+
+  const dropdownContainerStyle = {
+    position: 'relative',
+  };
+
+  const statusBtnStyle = (status) => ({
+    padding: '8px 16px',
+    borderRadius: '8px',
+    border: 'none',
+    background: status === 'SOLVED' ? '#10b981' : '#f59e0b',
+    color: 'white',
+    fontWeight: '600',
+    cursor: 'pointer',
+    fontSize: '14px',
+    display: 'flex',
+    alignItems: 'center',
+    gap: '6px',
+  });
+
+  const dropdownMenuStyle = {
+    position: 'absolute',
+    top: '100%',
+    right: '0',
+    marginTop: '8px',
+    background: 'white',
+    borderRadius: '8px',
+    boxShadow: '0 4px 12px rgba(0,0,0,0.2)',
+    overflow: 'hidden',
+    minWidth: '140px',
+    zIndex: 10,
+  };
+
+  const dropdownItemStyle = {
+    padding: '10px 16px',
+    cursor: 'pointer',
+    fontSize: '14px',
+    fontWeight: '600',
+    border: 'none',
+    width: '100%',
+    textAlign: 'left',
+    transition: 'all 0.2s',
   };
 
   return (
@@ -120,12 +221,6 @@ function HandleComplaints() {
         <button onClick={handleBack} style={backBtnStyle}>
           Back to dashboard
         </button>
-
-        {/* <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
-          <span style={{ color: 'white', fontSize: '18px' }}>
-            Admin: {currentAdmin?.name || currentAdmin?.email}
-          </span>
-        </div> */}
       </div>
 
       <h1 style={titleStyle}>Danh sách phản ánh / khiếu nại</h1>
@@ -142,12 +237,60 @@ function HandleComplaints() {
         <div style={listStyle}>
           {complaints.map(item => (
             <div key={item.id} style={cardStyle}>
-              <button
-                style={closeBtnStyle}
-                onClick={() => handleRemove(item.id)}
-              >
-                ×
-              </button>
+              <div style={actionContainerStyle}>
+                {/* Remove Button */}
+                <button
+                  style={removeBtnStyle}
+                  onClick={() => handleRemove(item.id)}
+                  onMouseEnter={(e) => e.target.style.background = '#dc2626'}
+                  onMouseLeave={(e) => e.target.style.background = '#ef4444'}
+                >
+                  Remove
+                </button>
+
+                {/* Status Dropdown */}
+                <div style={dropdownContainerStyle}>
+                  <button
+                    style={statusBtnStyle(item.status)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setOpenDropdown(openDropdown === item.id ? null : item.id);
+                    }}
+                  >
+                    {item.status || 'UNSOLVED'}
+                    <span style={{ fontSize: '12px' }}>▼</span>
+                  </button>
+
+                  {openDropdown === item.id && (
+                    <div style={dropdownMenuStyle}>
+                      <button
+                        style={{
+                          ...dropdownItemStyle,
+                          background: 'transparent',
+                          color: '#f59e0b',
+                        }}
+                        onClick={() => handleStatusChange(item.id, 'UNSOLVED')}
+                        onMouseEnter={(e) => e.target.style.background = '#fef3c7'}
+                        onMouseLeave={(e) => e.target.style.background = 'transparent'}
+                      >
+                        UNSOLVED
+                      </button>
+                      <button
+                        style={{
+                          ...dropdownItemStyle,
+                          background: 'transparent',
+                          color: '#10b981',
+                        }}
+                        onClick={() => handleStatusChange(item.id, 'SOLVED')}
+                        onMouseEnter={(e) => e.target.style.background = '#d1fae5'}
+                        onMouseLeave={(e) => e.target.style.background = 'transparent'}
+                      >
+                        SOLVED
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </div>
 
               {item.title && (
                 <h3 style={{ marginBottom: '10px', fontSize: '18px' }}>
