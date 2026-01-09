@@ -7,6 +7,7 @@ import backgroundImage from '../assets/images/afterLogin-bg.jpg';
 // === CẤU HÌNH HỆ THỐNG ===
 const USE_MOCK = false; // Chuyển thành false khi có API thật
 const API_URL = 'http://localhost:3000/api/fees';
+const PAYMENT_STATUS_API = 'http://localhost:3000/api/bills/payment-status';// API kiểm tra trạng thái thanh toán
 
 const UpdateFeePage = () => {
   const navigate = useNavigate();
@@ -14,22 +15,22 @@ const UpdateFeePage = () => {
   const fee = location.state?.fee;
 
   const selectStyle = {
-  width: '100%',
-  padding: '12px 16px',
-  borderRadius: '12px', // Bo góc giống ô Tên hóa đơn của bạn
-  border: '1px solid #E2E8F0',
-  fontSize: '16px',
-  backgroundColor: 'white',
-  appearance: 'none', // Quan trọng: Xóa mũi tên mặc định
-  WebkitAppearance: 'none',
-  backgroundImage: `url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%236B7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E")`,
-  backgroundRepeat: 'no-repeat',
-  backgroundPosition: 'right 16px center',
-  backgroundSize: '1.2em',
-  color: '#1A202C',
-  cursor: 'pointer',
-  marginTop: '8px'
-};
+    width: '100%',
+    padding: '12px 16px',
+    borderRadius: '12px',
+    border: '1px solid #E2E8F0',
+    fontSize: '16px',
+    backgroundColor: 'white',
+    appearance: 'none',
+    WebkitAppearance: 'none',
+    backgroundImage: `url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%236B7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E")`,
+    backgroundRepeat: 'no-repeat',
+    backgroundPosition: 'right 16px center',
+    backgroundSize: '1.2em',
+    color: '#1A202C',
+    cursor: 'pointer',
+    marginTop: '8px'
+  };
 
   const [formData, setFormData] = useState({
     id: '',
@@ -37,6 +38,13 @@ const UpdateFeePage = () => {
     amount: '',
     cycle: ''
   });
+
+  // State cho tìm kiếm trạng thái thanh toán
+  const [searchRoomNumber, setSearchRoomNumber] = useState('');
+  const [paymentStatus, setPaymentStatus] = useState(null);
+  const [isSearching, setIsSearching] = useState(false);
+  const [searchError, setSearchError] = useState('');
+
   useEffect(() => {
     if (!fee) {
       alert('Không có dữ liệu khoản thu!');
@@ -62,6 +70,49 @@ const UpdateFeePage = () => {
       ...prev,
       [name]: value
     }));
+  };
+
+  // Hàm xử lý tìm kiếm trạng thái thanh toán
+  const handleSearchPaymentStatus = async () => {
+    if (!searchRoomNumber.trim()) {
+      setSearchError('Vui lòng nhập số phòng!');
+      return;
+    }
+
+    setIsSearching(true);
+    setSearchError('');
+    setPaymentStatus(null);
+
+    if (USE_MOCK) {
+      // Mock data để test
+      setTimeout(() => {
+        const mockStatus = Math.random() > 0.5 ? 'PAID' : 'UNPAID';
+        setPaymentStatus({
+          roomNumber: searchRoomNumber,
+          status: mockStatus,
+          feeName: formData.name
+        });
+        setIsSearching(false);
+      }, 800);
+    } else {
+      try {
+        const response = await fetch(
+          `${PAYMENT_STATUS_API}?roomNumber=${searchRoomNumber}&feeId=${formData.id}`
+        );
+
+        if (response.ok) {
+          const data = await response.json();
+          setPaymentStatus(data);
+        } else {
+          setSearchError('Không tìm thấy thông tin phòng này!');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        setSearchError('Không thể kết nối với server!');
+      } finally {
+        setIsSearching(false);
+      }
+    }
   };
 
   const handleSubmit = async () => {
@@ -133,6 +184,7 @@ const UpdateFeePage = () => {
           display: flex;
           align-items: center;
           justify-content: center;
+          position: relative;
         }
 
         .form-container {
@@ -261,6 +313,101 @@ const UpdateFeePage = () => {
           border: 1px solid #fca5a5;
         }
 
+        /* CSS cho phần tìm kiếm trạng thái */
+        .search-panel {
+          position: fixed;
+          top: 40px;
+          right: 40px;
+          background: white;
+          border-radius: 16px;
+          padding: 24px;
+          box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+          width: 320px;
+          z-index: 1000;
+        }
+
+        .search-panel h3 {
+          color: #1e293b;
+          font-size: 18px;
+          margin-bottom: 16px;
+          font-weight: 600;
+        }
+
+        .search-input-group {
+          display: flex;
+          gap: 8px;
+          margin-bottom: 16px;
+        }
+
+        .search-input {
+          flex: 1;
+          padding: 10px 14px;
+          border: 2px solid #e2e8f0;
+          border-radius: 8px;
+          font-size: 15px;
+        }
+
+        .search-input:focus {
+          outline: none;
+          border-color: #1e40af;
+        }
+
+        .btn-search {
+          padding: 10px 20px;
+          background: #1e40af;
+          color: white;
+          border: none;
+          border-radius: 8px;
+          cursor: pointer;
+          font-weight: 600;
+          transition: all 0.3s;
+        }
+
+        .btn-search:hover:not(:disabled) {
+          background: #1d4ed8;
+        }
+
+        .btn-search:disabled {
+          background: #94a3b8;
+          cursor: not-allowed;
+        }
+
+        .status-result {
+          padding: 16px;
+          border-radius: 10px;
+          text-align: center;
+          font-weight: 600;
+          font-size: 16px;
+          animation: slideIn 0.3s ease;
+        }
+
+        .status-result.paid {
+          background: #d1fae5;
+          color: #065f46;
+          border: 2px solid #6ee7b7;
+        }
+
+        .status-result.unpaid {
+          background: #fee2e2;
+          color: #991b1b;
+          border: 2px solid #fca5a5;
+        }
+
+        .status-result .room-info {
+          font-size: 14px;
+          margin-top: 8px;
+          opacity: 0.8;
+        }
+
+        .search-error {
+          padding: 12px;
+          background: #fef3c7;
+          color: #92400e;
+          border-radius: 8px;
+          font-size: 14px;
+          text-align: center;
+        }
+
         @keyframes slideIn {
           from {
             opacity: 0;
@@ -284,9 +431,54 @@ const UpdateFeePage = () => {
           .button-group {
             flex-direction: column;
           }
+
+          .search-panel {
+            position: static;
+            width: 100%;
+            margin-bottom: 20px;
+          }
         }
       `}</style>
 
+      {/* Panel tìm kiếm trạng thái thanh toán */}
+      <div className="search-panel">
+        <h3>Kiểm tra thanh toán</h3>
+        
+        <div className="search-input-group">
+          <input
+            type="text"
+            className="search-input"
+            placeholder="Nhập số phòng"
+            value={searchRoomNumber}
+            onChange={(e) => setSearchRoomNumber(e.target.value)}
+            onKeyPress={(e) => e.key === 'Enter' && handleSearchPaymentStatus()}
+          />
+          <button
+            className="btn-search"
+            onClick={handleSearchPaymentStatus}
+            disabled={isSearching}
+          >
+            {isSearching ? '...' : 'Tìm'}
+          </button>
+        </div>
+
+        {paymentStatus && (
+          <div className={`status-result ${paymentStatus.status === 'PAID' ? 'paid' : 'unpaid'}`}>
+            {paymentStatus.status === 'PAID' ? 'ĐÃ THANH TOÁN' : 'CHƯA THANH TOÁN'}
+            <div className="room-info">
+              Phòng {paymentStatus.roomNumber}
+            </div>
+          </div>
+        )}
+
+        {searchError && (
+          <div className="search-error">
+            {searchError}
+          </div>
+        )}
+      </div>
+
+      {/* Form cập nhật khoản thu */}
       <div className="form-container">
         <div className="form-header">
           <h1>Cập nhật khoản thu</h1>
@@ -307,7 +499,6 @@ const UpdateFeePage = () => {
         <div className="form-field">
           <label>Cycle</label>
           <div style={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
-            
             <select
               name="cycle"
               value={formData.cycle}
@@ -320,7 +511,6 @@ const UpdateFeePage = () => {
               <option value="YEARLY">Hàng năm (YEARLY)</option>
             </select>
           </div>
-
         </div>
 
         <div className="form-field">

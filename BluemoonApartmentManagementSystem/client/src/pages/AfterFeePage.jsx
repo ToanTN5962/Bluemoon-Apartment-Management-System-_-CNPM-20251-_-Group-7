@@ -4,7 +4,8 @@ import backgroundImage from '../assets/images/login-bg.jpg';
 
 // === CẤU HÌNH HỆ THỐNG ===
 const USE_MOCK = true;
-const API_URL = 'https://your-backend-api.com/api/fee-details';
+const API_URL = 'http://localhost:3000/api/bills/payment-status';
+
 
 const AfterFeePage = () => {
   const navigate = useNavigate();
