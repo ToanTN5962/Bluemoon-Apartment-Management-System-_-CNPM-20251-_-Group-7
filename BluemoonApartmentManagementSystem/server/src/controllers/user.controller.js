@@ -133,3 +133,16 @@ exports.search = async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
+
+exports.activateUser = async (req, res) => {
+  try {
+    const userId = Number(req.params.id);
+    const updatedUser = await prisma.user.update({
+      where: { id: userId },
+      data: { isActive: true }
+    });
+    res.json({ message: 'User activated successfully', user: updatedUser });
+  } catch (err) {
+    res.status(400).json({ message: 'Không thể kích hoạt user' });
+  }
+};

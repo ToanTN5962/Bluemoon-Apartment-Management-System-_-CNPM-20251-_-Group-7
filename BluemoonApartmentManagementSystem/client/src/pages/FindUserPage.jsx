@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import backgroundImage from '../assets/images/resetPass-bg.jpg'; // Thay đường dẫn/tên file nếu khác (ví dụ: Admin-bg.jpg nếu muốn dùng chung)
+import backgroundImage from '../assets/images/resetPass-bg.jpg';
 
 const FindUserPage = () => {
     const navigate = useNavigate();
@@ -9,27 +9,61 @@ const FindUserPage = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
 
-    const handleSearch = async () => {
-        if (!searchQuery.trim()) {
-            setUsers([]);
-            return;
-        }
-
+    const fetchUsers = async (query = '') => {
+        const trimmedQuery = query.trim();
         setLoading(true);
         setError('');
+
         try {
-            // Thay đổi URL này thành API thực tế của backend
-            const response = await fetch(`/api/users/search?q=${encodeURIComponent(searchQuery.trim())}`);
-            if (!response.ok) throw new Error('Không tìm thấy dữ liệu');
-            const data = await response.json();
-            // Giả sử backend trả về mảng [{ fullName, phone, email }]
-            setUsers(Array.isArray(data) ? data : [data]);
+            let data;
+            if (trimmedQuery === '') {
+                // Lấy tất cả users từ endpoint getAll
+                const response = await fetch('/api/users/');
+                if (!response.ok) throw new Error('Không tải được danh sách người dùng');
+                data = await response.json();
+            } else {
+                // Tìm kiếm với query
+                const response = await fetch(`/api/users/search?q=${encodeURIComponent(trimmedQuery)}`);
+                if (!response.ok) {
+                    if (response.status === 400) {
+                        // Nếu backend báo missing query (tránh trường hợp q= rỗng)
+                        throw new Error('Vui lòng nhập từ khóa tìm kiếm');
+                    }
+                    throw new Error('Không tìm thấy dữ liệu');
+                }
+                data = await response.json();
+            }
+
+            // Normalize dữ liệu về cùng format
+            const normalizedUsers = Array.isArray(data) ? data.map(user => ({
+                id: user.id,
+                fullName: user.fullName || '—',
+                email: user.email || '—',
+                phoneNum: user.phoneNum || user.phone || '—',
+                isActive: user.isActive // chỉ có khi từ getAll
+            })) : [];
+
+            // Filter chỉ user active (chỉ áp dụng được cho getAll vì search chưa trả isActive)
+            const activeUsers = normalizedUsers.filter(user => 
+                user.isActive === undefined || user.isActive === true
+            );
+
+            setUsers(activeUsers);
         } catch (err) {
-            setError('Lỗi khi tìm kiếm. Vui lòng thử lại.');
+            setError(err.message || 'Lỗi khi tải dữ liệu. Vui lòng thử lại.');
             setUsers([]);
         } finally {
             setLoading(false);
         }
+    };
+
+    // Load tất cả users khi mở trang
+    useEffect(() => {
+        fetchUsers();
+    }, []);
+
+    const handleSearch = () => {
+        fetchUsers(searchQuery);
     };
 
     const handleKeyPress = (e) => {
@@ -38,11 +72,13 @@ const FindUserPage = () => {
         }
     };
 
+    const isSearching = searchQuery.trim() !== '';
+
     return (
         <div
             style={{
                 minHeight: '100vh',
-                backgroundImage: `url(${backgroundImage})`, // Sử dụng ảnh import từ file local
+                backgroundImage: `url(${backgroundImage})`,
                 backgroundSize: 'cover',
                 backgroundPosition: 'center',
                 backgroundAttachment: 'fixed',
@@ -52,7 +88,7 @@ const FindUserPage = () => {
                 flexDirection: 'column',
             }}
         >
-            {/* Header: Back button và ô tìm kiếm */}
+            {/* Header */}
             <div
                 style={{
                     display: 'flex',
@@ -66,9 +102,8 @@ const FindUserPage = () => {
                     marginRight: 'auto',
                 }}
             >
-                {/* Nút Back to dashboard - style nhất quán với AdminPage */}
                 <button
-                    onClick={() => navigate(-1)} // Quay lại AdminPage
+                    onClick={() => navigate(-1)}
                     style={{
                         background: 'rgba(255, 255, 255, 0.92)',
                         border: 'none',
@@ -88,7 +123,6 @@ const FindUserPage = () => {
                     Back to dashboard
                 </button>
 
-                {/* Ô tìm kiếm - style nhất quán hơn */}
                 <div
                     style={{
                         background: 'rgba(255, 255, 255, 0.92)',
@@ -123,7 +157,7 @@ const FindUserPage = () => {
                             background: 'none',
                             border: 'none',
                             cursor: 'pointer',
-                            fontSize: '22px',
+                            fontSize: '24px',
                             marginLeft: '12px',
                             color: '#4c7cff',
                         }}
@@ -132,61 +166,50 @@ const FindUserPage = () => {
                 </div>
             </div>
 
-            {/* Thông báo trạng thái */}
-            {loading && <p style={{ textAlign: 'center', color: 'white', fontSize: '20px', textShadow: '0 2px 8px rgba(0,0,0,0.6)', fontWeight: '600' }}>Đang tìm kiếm...</p>}
+            {/* Trạng thái */}
+            {loading && <p style={{ textAlign: 'center', color: 'white', fontSize: '20px', textShadow: '0 2px 8px rgba(0,0,0,0.6)', fontWeight: '600' }}>Đang tải...</p>}
             {error && <p style={{ textAlign: 'center', color: '#ff6b6b', fontSize: '20px', textShadow: '0 2px 8px rgba(0,0,0,0.6)', fontWeight: '600' }}>{error}</p>}
 
-            {/* Kết quả tìm kiếm - Masonry layout */}
-            {/* Kết quả tìm kiếm - Grid layout thay cho Masonry */}
+            {/* Danh sách users */}
             <div
                 style={{
                     display: 'grid',
-                    gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))', // Tự động chia cột đều nhau
+                    gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))',
                     gap: '30px',
                     maxWidth: '1400px',
                     margin: '0 auto',
                     padding: '0 20px',
-                    width: '100%', // Đảm bảo chiếm hết chiều ngang
+                    width: '100%',
                 }}
             >
                 {users.map((user) => (
                     <div
                         key={user.id}
                         style={{
-                            background: 'rgba(0, 0, 128, 0.9)', // Thêm chút trong suốt cho đẹp
+                            background: 'rgba(0, 0, 128, 0.9)',
                             color: 'white',
                             padding: '32px',
                             borderRadius: '20px',
                             boxShadow: '0 10px 25px rgba(0,0,0,0.5)',
-                            // Loại bỏ breakInside và display: inline-block cũ
                         }}
                     >
                         <p style={{ margin: '14px 0', fontSize: '19px' }}>
-                            <strong>Full name:</strong> {user.fullName || '—'}
+                            <strong>Full name:</strong> {user.fullName}
                         </p>
-
                         <p style={{ margin: '14px 0', fontSize: '19px' }}>
-                            <strong>Email:</strong> {user.email || '—'}
+                            <strong>Email:</strong> {user.email}
                         </p>
-
                         <p style={{ margin: '14px 0', fontSize: '19px' }}>
-                            <strong>Phone:</strong> {user.phoneNum || '—'}
+                            <strong>Phone:</strong> {user.phoneNum}
                         </p>
                     </div>
                 ))}
             </div>
 
-            {/* Thông báo khi chưa tìm kiếm */}
-            {!loading && users.length === 0 && !error && searchQuery === '' && (
+            {/* Thông báo không có kết quả */}
+            {!loading && !error && users.length === 0 && (
                 <p style={{ textAlign: 'center', color: 'white', fontSize: '24px', marginTop: '140px', textShadow: '0 2px 8px rgba(0,0,0,0.6)', fontWeight: '600' }}>
-                    Nhập email hoặc số điện thoại để tìm kiếm người dùng
-                </p>
-            )}
-
-            {/* Thông báo khi không có kết quả */}
-            {!loading && users.length === 0 && !error && searchQuery !== '' && (
-                <p style={{ textAlign: 'center', color: 'white', fontSize: '24px', marginTop: '140px', textShadow: '0 2px 8px rgba(0,0,0,0.6)', fontWeight: '600' }}>
-                    Không tìm thấy người dùng nào
+                    {isSearching ? 'Không tìm thấy người dùng nào' : 'Hệ thống chưa có người dùng active nào'}
                 </p>
             )}
         </div>
