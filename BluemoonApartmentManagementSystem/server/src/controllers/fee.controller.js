@@ -5,8 +5,8 @@ exports.create = async (req, res) => {
     const fee = await prisma.fee.create({
       data: {
         name: req.body.name,
-        amount: req.body.amount,
-        cycle: req.body.cycle
+        amount: parseInt(req.body.amount),
+        type: req.body.type || "OTHER",
       }
     });
 
@@ -57,7 +57,7 @@ exports.update = async (req, res) => {
       data: {
         name: req.body.name,
         amount: req.body.amount,
-        cycle: req.body.cycle,
+        type: req.body.type,
       },
     });
 

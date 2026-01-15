@@ -68,7 +68,7 @@ model Fee {
   id      Int     @id @default(autoincrement())
   name    String
   amount  Int 
-  cycle   Cycle   @default(DAILY)
+  type    FeeType @default(OTHER)
   bill    Bill[]
 }
 
@@ -137,6 +137,14 @@ enum Sex {
   OTHER
 }
 
+enum FeeType{
+  ELECTRICITY
+  WATER
+  RENT
+  VEHICLE
+  OTHER
+}
+
 enum Status {
   PERMANENT
   TEMPORARY
@@ -152,15 +160,10 @@ enum Type {
   ABSENCE
 }
 
-enum Cycle {
-  DAILY
-  WEEKLY
-  MONTHLY
-  YEARLY
-}
 
 enum PaidStatus {
   PAID
+  PENDING_APPROVAL
   UNPAID
 }
 

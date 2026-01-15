@@ -29,11 +29,20 @@ export default function UpdateInfoPage() {
       const userData = JSON.parse(storedUser);
       const actualId = userData.user ? userData.user.id : userData.id;
       const actualEmail = userData.user ? userData.user.email : userData.email;
-      
+      const actualFullName = userData.user ? userData.user.fullName : userData.fullName;
+      const actualPhoneNum = userData.user ? userData.user.phoneNum : userData.phoneNum;
+      const actualDateOfBirth = userData.user ? userData.user.dateOfBirth : userData.dateOfBirth;
+      const actualIdentificationNumber = userData.user ? userData.user.identificationNumber : userData.identificationNumber;
+      const actualRoomNumber = userData.user ? userData.user.roomNumber : userData.roomNumber;
       setFormData(prev => ({
         ...prev,
         userId: actualId,  
-        email: actualEmail || ''
+        email: actualEmail || '',
+        fullName: actualFullName || '',
+        phoneNum: actualPhoneNum || '',
+        dateOfBirth: actualDateOfBirth ? actualDateOfBirth.slice(0,10) : '',
+        identificationNumber: actualIdentificationNumber || '',
+        roomNumber: actualRoomNumber || ''
       }));
     } catch (err) {
       console.error('Error parsing user data from localStorage:', err);
