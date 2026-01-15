@@ -477,8 +477,35 @@ export default function UpdateInfoPage() {
             <div style={{
               display: 'flex',
               justifyContent: 'center',
-              marginTop: '30px'
+              gap: '30px',
+              marginTop: '40px'
             }}>
+              <button
+                onClick={() => navigate('/user')}
+                style={{
+                  padding: '20px 30px',
+                  fontSize: '22px',
+                  fontWeight: '700',
+                  color: 'white', 
+                  backgroundColor: '#4c7cff',
+                  border: 'none',
+                  borderRadius: '15px',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease',
+                  backdropFilter: 'blur(5px)'  
+                }}
+                onMouseOver={(e) => {
+                    e.currentTarget.style.transform = 'translateY(-2px)';
+                    e.currentTarget.style.boxShadow = '0 12px 30px rgba(76, 124, 255, 0.5)';
+                }}
+                onMouseOut={(e) => {
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow = '0 8px 20px rgba(76, 124, 255, 0.4)';
+                }}
+              >
+                Back to dashboard
+              </button>
+
               <button
                 onClick={handleSubmit}
                 disabled={loading}
