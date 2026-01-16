@@ -40,12 +40,14 @@ const FindUserPage = () => {
                 fullName: user.fullName || '—',
                 email: user.email || '—',
                 phoneNum: user.phoneNum || user.phone || '—',
-                isActive: user.isActive // chỉ có khi từ getAll
+                isActive: user.isActive, // chỉ có khi từ getAll
+                role: user.role
             })) : [];
 
             // Filter chỉ user active (chỉ áp dụng được cho getAll vì search chưa trả isActive)
             const activeUsers = normalizedUsers.filter(user => 
-                user.isActive === undefined || user.isActive === true
+                (user.isActive === undefined || user.isActive === true) &&
+                (user.role === undefined || user.role === "USER")
             );
 
             setUsers(activeUsers);

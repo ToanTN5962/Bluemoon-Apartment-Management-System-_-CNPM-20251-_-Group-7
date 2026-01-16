@@ -3,12 +3,12 @@ const prisma = require("../prisma/client");
 exports.create = async (req, res) => {
   try {
     const fee = await prisma.fee.create({
-      data: {
-        name: req.body.name,
-        amount: req.body.amount,
-        cycle: req.body.cycle
-      }
-    });
+        data: {
+          name: req.body.name,
+          amount: req.body.amount,
+          cycle: req.body.cycle
+        }
+      });
 
     res.json(fee);
   } catch (err) {
@@ -23,6 +23,7 @@ exports.create = async (req, res) => {
 exports.getAll = async (_, res) => {
   res.json(await prisma.fee.findMany());
 };
+
 exports.test = (req, res) => {
   res.send("Fee controller is working!");
 }
